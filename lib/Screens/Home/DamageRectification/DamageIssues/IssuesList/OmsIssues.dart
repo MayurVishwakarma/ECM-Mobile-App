@@ -537,10 +537,10 @@ class _Oms_IssuesState extends State<Oms_Issues> {
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/OMS/issue'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/OMS/issue'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/OMS/issue');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/OMS/issue');
 
       var json = jsonDecode(res.body);
       List<InformationMasterModel> fetchedData = <InformationMasterModel>[];

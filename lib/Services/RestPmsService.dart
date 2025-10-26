@@ -59,7 +59,7 @@ Future<List<ECM_Checklist_Model>> getECMCheckListByProcessId(
     ));
 
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/ecm/ecmdetailreport/$projectId/$processId/$source/$deviceId';
+        'http://ecmv2.iotwater.in:3011/api/v1/ecm/ecmdetailreport/$projectId/$processId/$source/$deviceId';
 
     print("URL: $url");
 
@@ -86,7 +86,7 @@ Future<List<ECM_Checklist_Model>> getECMCheckListByProcessId(
     throw Exception("An error occurred while fetching ECM checklist");
   }
 }
-
+/*
 Future<String?> uploadImage(String ImagePath, XFile? image) async {
   try {
     if (image == null || image.path.isEmpty) {
@@ -136,7 +136,7 @@ Future<String?> uploadImage(String ImagePath, XFile? image) async {
     return '';
   }
 }
-
+*/
 /*Future<String?> uploadImageAndGetPath(
     String filePath, String deviceType, int deviceId) async {
   try {
@@ -155,7 +155,7 @@ Future<String?> uploadImage(String ImagePath, XFile? image) async {
 
     // Endpoint URL
     final url =
-        'http://ecmtest.iotwater.in:3011aa/api/v1/ecm_images/$projectId/$deviceType/$deviceId';
+        'http://ecmv2.iotwater.in:3011aa/api/v1/ecm_images/$projectId/$deviceType/$deviceId';
 
     final response = await dio.request(
       url,
@@ -194,7 +194,7 @@ Future<String?> uploadImageAndGetPath(
     });
 
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/ecm_images/$projectId/$deviceType/$deviceId';
+        'http://ecmv2.iotwater.in:3011/api/v1/ecm_images/$projectId/$deviceType/$deviceId';
 
     final response = await dio.post(url, data: formData);
 
@@ -215,7 +215,7 @@ Future<String?> uploadImageAndGetPath(
 Future<bool> uploadECMReport(dynamic payload) async {
   try {
     var response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/ecm/saveecmreport',
+      'http://ecmv2.iotwater.in:3011/api/v1/ecm/saveecmreport',
       options: Options(
         method: 'POST',
         headers: headers,
@@ -231,11 +231,9 @@ Future<bool> uploadECMReport(dynamic payload) async {
         throw new Exception();
     } else {
       return false;
-      // throw Exception("API Consumed Failed");
     }
   } catch (e) {
     print(jsonDecode(e.toString()));
-    // Handle any errors that occur during the request
     throw Exception("Failed to upload ECM report");
   }
 }
@@ -252,28 +250,11 @@ Future<List<PMSListViewModel>?> getEcmStatusList({
 }) async {
   try {
     final prefs = await SharedPreferences.getInstance();
-    // final conString = await prefs.getString('ConString');
+    
     final projectId = prefs.getString('ProjectId');
-    // var data = json.encode({
-    //   "search": search,
-    //   "areaId": areaId,
-    //   "distributoryId": distibutoryId,
-    //   "processId": processId,
-    //   "subProcessId": subProcessId,
-    //   "deviceType": source,
-    //   "index": index,
-    //   "limit": limit,
-    //   "projectId": projectId,
-    // });
-    // final response = await http.get(Uri.parse(
-    //     'http://wmsservices.seprojects.in/api/PMS/ECMReportStatus?Search=$search&areaId=$areaId&DistributoryId=$distibutoryId&Process=$processId&ProcessStatus=$subProcessId&pageIndex=$index&pageSize=$limit&Source=OMS&conString=$conString'));
-    /*var response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/ecm/ecmreportlist',
-      options: Options(method: 'POST', headers: headers),
-      data: data,
-    );*/
+   
     final response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/ecm/ecmreportlist?search=${search}&areaId=${areaId}&distributoryId=${distibutoryId}&processId=${processId}&subProcessId=${subProcessId}&deviceType=$source&index=$index&limit=$limit&projectId=$projectId',
+      'http://ecmv2.iotwater.in:3011/api/v1/ecm/ecmreportlist?search=${search}&areaId=${areaId}&distributoryId=${distibutoryId}&processId=${processId}&subProcessId=${subProcessId}&deviceType=$source&index=$index&limit=$limit&projectId=$projectId',
       options: Options(
         method: 'GET',
       ),
@@ -290,6 +271,31 @@ Future<List<PMSListViewModel>?> getEcmStatusList({
     }
   } catch (e) {
     throw Exception('Failed to load API');
+  }
+}
+
+Future<ECMStatusCountMasterModel> getECMReportStatusCoun(
+    String? area, distibutory, source) async {
+  try {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    final projectId = preferences.getString('ProjectId');
+
+    final response = await http.get(Uri.parse(
+        'http://ecmv2.iotwater.in:3011/api/v1/ecm/ecmreportcount?search&areaId=$area&distributoryId=$distibutory&processId=all&subProcessId=all&deviceType=$source&projectId=$projectId'));
+    print(
+        'http://ecmv2.iotwater.in:3011/api/v1/ecm/ecmreportcount?search&areaId=$area&distributoryId=$distibutory&processId=all&subProcessId=all&deviceType=$source&projectId=$projectId');
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      ECMStatusCountMasterModel result =
+          ECMStatusCountMasterModel.fromJson(json['data']['Response'][0]);
+      print(result.sCount);
+      return result;
+    } else {
+      throw Exception('Failed to load API');
+    }
+  } catch (e) {
+    throw Exception('Failed to load API :${e}');
   }
 }
 

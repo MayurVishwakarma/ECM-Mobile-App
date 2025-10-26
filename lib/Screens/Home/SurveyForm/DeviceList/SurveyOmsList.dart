@@ -611,10 +611,9 @@ class _SurveyOmsListState extends State<SurveyOmsList> {
 
   int _page = 0;
   final int _limit = 20;
-  
+
   bool _hasNextPage = true;
 
-  
   bool _isFirstLoadRunning = false;
 
   // Used to display loading indicators when _loadMore function is running
@@ -635,10 +634,12 @@ class _SurveyOmsListState extends State<SurveyOmsList> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
       String? conString = preferences.getString('ConString');
+      final projectId = preferences.getString('ProjectId');
       String? projectName = preferences.getString('ProjectName');
 
-      var url = '';
-      if (projectName!.contains('Kundalia LBC')) {
+      var url =
+          'http://ecmv2.iotwater.in:3011/api/v1/survey/siteSurveyNodeList?search=$_search&areaId=$area&distributoryId=$distibutory&deviceType=OMS&index=$_page&limit=$_limit&projectId=$projectId';
+      /*if (projectName!.contains('Kundalia LBC')) {
         url =
             'http://ecm.seprojects.in:3008/api/v1/survey/status/KLBC/$area/$distibutory/$_page/$_limit?search=$_search';
       } else if (projectName.contains('Kundalia RBC')) {
@@ -650,7 +651,7 @@ class _SurveyOmsListState extends State<SurveyOmsList> {
       } else {
         url =
             'http://wmsservices.seprojects.in/api/OMS/OmsSurveyReportStatus?Search=$_search&areaId=$area&DistributoryId=$distibutory&pageIndex=$_page&pageSize=$_limit&conString=$conString';
-      }
+      }*/
       print(url);
       final res = await http.get(Uri.parse(url));
 
@@ -686,10 +687,12 @@ class _SurveyOmsListState extends State<SurveyOmsList> {
       try {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         String? conString = preferences.getString('ConString');
+        final projectId = preferences.getString('ProjectId');
         String? projectName = preferences.getString('ProjectName');
 
-        var url = '';
-        if (projectName!.contains('Kundalia LBC')) {
+        var url =
+            'http://ecmv2.iotwater.in:3011/api/v1/survey/siteSurveyNodeList?search=$_search&areaId=$area&distributoryId=$distibutory&deviceType=OMS&index=$_page&limit=$_limit&projectId=$projectId';
+        /*if (projectName!.contains('Kundalia LBC')) {
           url =
               'http://ecm.seprojects.in:3008/api/v1/survey/status/KLBC/$area/$distibutory/$_page/$_limit?search=$_search';
         } else if (projectName.contains('Kundalia RBC')) {
@@ -700,7 +703,7 @@ class _SurveyOmsListState extends State<SurveyOmsList> {
               'http://ecm.seprojects.in:3008/api/v1/survey/status/ALP/$area/$distibutory/$_page/$_limit?search=$_search';
         } else {
           'http://wmsservices.seprojects.in/api/OMS/OmsSurveyReportStatus?Search=$_search&areaId=$area&DistributoryId=$distibutory&pageIndex=$_page&pageSize=$_limit&conString=$conString';
-        }
+        }*/
         final res = await http.get(Uri.parse(url));
 
         print(url);

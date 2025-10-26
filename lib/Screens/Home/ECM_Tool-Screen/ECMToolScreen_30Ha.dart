@@ -87,13 +87,13 @@ class _EcmToolScreen30HaState extends State<EcmToolScreen30Ha> {
                     height: 18,
                     width: 18),
                 onTap: () async {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Offline_List30Ha(
-                            ProjectName: projectName, Source: source)),
-                    (Route<dynamic> route) => true,
-                  );
+                  // Navigator.pushAndRemoveUntil(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //       builder: (context) => Offline_List30Ha(
+                  //           ProjectName: projectName, Source: source)),
+                  //   (Route<dynamic> route) => true,
+                  // );
                 },
               ),
             ),

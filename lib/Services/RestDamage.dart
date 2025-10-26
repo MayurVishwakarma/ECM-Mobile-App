@@ -24,9 +24,9 @@ Future<List<DamageInsertModel>> getDamageform(
   String? projectId = preferences.getString('ProjectId');
   try {
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/damageDetailReport/$projectId/$deviceType/$deviceId'));
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/damageDetailReport/$projectId/$deviceType/$deviceId'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/damageDetailReport/$projectId/$deviceType/$deviceId');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/damageDetailReport/$projectId/$deviceType/$deviceId');
 
     if (response.statusCode == 200) {
       List<DamageInsertModel> result = <DamageInsertModel>[];
@@ -45,12 +45,13 @@ Future<List<DamageInsertModel>> getDamageform(
 
 Future<List<SurveyInsertModel>> getSurveyformOms(int deviceId) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  String? conString = preferences.getString('ConString');
+  // String? conString = preferences.getString('ConString');
+  final projectId = preferences.getString('ProjectId');
   try {
     final response = await http.get(Uri.parse(
-        'http://wmsservices.seprojects.in/api/OMS/OmsSurveyReport?omsId=$deviceId&conString=$conString'));
+        'http://ecmv2.iotwater.in:3011/api/v1/survey/siteSurveyReport/$deviceId/OMS/$projectId'));
     print(
-        'http://wmsservices.seprojects.in/api/OMS/OmsSurveyReport?omsId=$deviceId&conString=$conString');
+        'http://ecmv2.iotwater.in:3011/api/v1/survey/siteSurveyReport/$deviceId/OMS/$projectId');
 
     if (response.statusCode == 200) {
       List<SurveyInsertModel> result = <SurveyInsertModel>[];
@@ -64,6 +65,32 @@ Future<List<SurveyInsertModel>> getSurveyformOms(int deviceId) async {
   } on Exception catch (e) {
     print(e.toString());
     throw Exception("API Consumed Failed");
+  }
+}
+
+Future<bool> uploadSurveyReport(dynamic payload) async {
+  try {
+    var response = await dio.request(
+      'http://ecmv2.iotwater.in:3011/api/v1/survey/saveSurveyReport',
+      options: Options(
+        method: 'POST',
+        headers: headers,
+      ),
+      data: payload,
+    );
+
+    if (response.statusCode == 200) {
+      var json = response.data;
+      if (json["Status"] == "Ok") {
+        return true;
+      } else
+        throw new Exception();
+    } else {
+      return false;
+    }
+  } catch (e) {
+    print(jsonDecode(e.toString()));
+    throw Exception("Failed to upload ECM report");
   }
 }
 
@@ -146,9 +173,9 @@ Future<List<MaterialConsumptionModel>> getDamageformCommon(
   String? projectId = preferences.getString('ProjectId');
   try {
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumption/$projectId/$source/$deviceId'));
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumption/$projectId/$source/$deviceId'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumption/$projectId/$source/$deviceId');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumption/$projectId/$source/$deviceId');
 
     if (response.statusCode == 200) {
       List<MaterialConsumptionModel> result = <MaterialConsumptionModel>[];
@@ -172,9 +199,9 @@ Future<List<DamageHistory>> getDamageHistorCommon(
 
   try {
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/damageHistoryreport?deviceId=$deviceId&startDate=1900-01-01&endDate=1900-01-01&index=0&limit=1500&deviceType=$source&projectId=$projectId'));
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/damageHistoryreport?deviceId=$deviceId&startDate=1900-01-01&endDate=1900-01-01&index=0&limit=1500&deviceType=$source&projectId=$projectId'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/damageHistoryreport?deviceId=$deviceId&startDate=1900-01-01&endDate=1900-01-01&index=0&limit=1500&deviceType=$source&projectId=$projectId');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/damageHistoryreport?deviceId=$deviceId&startDate=1900-01-01&endDate=1900-01-01&index=0&limit=1500&deviceType=$source&projectId=$projectId');
 
     if (response.statusCode == 200) {
       List<DamageHistory> result = <DamageHistory>[];
@@ -199,9 +226,9 @@ Future<List<MaterialConsumptionHistoryDamageModel>>
 
   try {
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryReport/$projectId/$deviceId/$source'));
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryReport/$projectId/$deviceId/$source'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryReport/$projectId/$deviceId/$source');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryReport/$projectId/$deviceId/$source');
 
     if (response.statusCode == 200) {
       List<MaterialConsumptionHistoryDamageModel> result =
@@ -225,9 +252,9 @@ Future<List<InfoModel>> Infomation(int deviceId, String source) async {
 
   try {
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/1'));
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/1'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/1');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/1');
 
     if (response.statusCode == 200) {
       List<InfoModel> result = <InfoModel>[];
@@ -251,9 +278,9 @@ Future<List<DamageIssuesMasterModel>> Issues(
 
   try {
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/2'));
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/2'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/2');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/informationReport/$projectId/$source/$deviceId/2');
 
     if (response.statusCode == 200) {
       List<DamageIssuesMasterModel> result = <DamageIssuesMasterModel>[];
@@ -278,9 +305,9 @@ Future<List<DamageInformationmodel>> getDamageInformationCommon(
 
   try {
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryReport/$projectId/$deviceId/$source/$infotype'));
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryReport/$projectId/$deviceId/$source/$infotype'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryReport/$projectId/$deviceId/$source/$infotype');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryReport/$projectId/$deviceId/$source/$infotype');
 
     if (response.statusCode == 200) {
       List<DamageInformationmodel> result = <DamageInformationmodel>[];
@@ -310,9 +337,9 @@ Future<List<DamageModel>?> getDamageStatusList({
     // final conString = await prefs.getString('ConString');
     final projectId = prefs.getString('ProjectId');
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/damage/damageReportList?search=${search}&areaId=${areaId}&distributoryId=${distibutoryId}&deviceType=${source}&index=${index}&limit=${limit}&projectId=$projectId');
+        'http://ecmv2.iotwater.in:3011/api/v1/damage/damageReportList?search=${search}&areaId=${areaId}&distributoryId=${distibutoryId}&deviceType=${source}&index=${index}&limit=${limit}&projectId=$projectId');
     final response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/damage/damageReportList?search=${search}&areaId=${areaId}&distributoryId=${distibutoryId}&deviceType=${source}&index=${index}&limit=${limit}&projectId=$projectId',
+      'http://ecmv2.iotwater.in:3011/api/v1/damage/damageReportList?search=${search}&areaId=${areaId}&distributoryId=${distibutoryId}&deviceType=${source}&index=${index}&limit=${limit}&projectId=$projectId',
       options: Options(
         method: 'GET',
       ),
@@ -335,7 +362,7 @@ Future<List<DamageModel>?> getDamageStatusList({
 Future<bool> uploadDamageReport(dynamic payload) async {
   try {
     var response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/damage/savedamagereport',
+      'http://ecmv2.iotwater.in:3011/api/v1/damage/savedamagereport',
       options: Options(
         method: 'POST',
         headers: headers,
@@ -363,7 +390,7 @@ Future<bool> uploadDamageReport(dynamic payload) async {
 Future<bool> uploadMaterialConsumptionReport(dynamic payload) async {
   try {
     var response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/damage/savematerialconsumptionreport',
+      'http://ecmv2.iotwater.in:3011/api/v1/damage/savematerialconsumptionreport',
       options: Options(
         method: 'POST',
         headers: headers,
@@ -391,7 +418,7 @@ Future<bool> uploadMaterialConsumptionReport(dynamic payload) async {
 Future<bool> uploadInfromationReport(dynamic payload) async {
   try {
     var response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/damage/saveinformationreport',
+      'http://ecmv2.iotwater.in:3011/api/v1/damage/saveinformationreport',
       options: Options(
         method: 'POST',
         headers: headers,
@@ -429,7 +456,7 @@ Future<List<DamageModel>?> getDamageHistoryList({
     final prefs = await SharedPreferences.getInstance();
     final projectId = prefs.getString('ProjectId');
     final response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/damage/damageReportList?search=$search&areaId=$areaId&distributoryId=$distibutoryId&deviceType=$source&index=$index&limit=$limit&projectId=$projectId',
+      'http://ecmv2.iotwater.in:3011/api/v1/damage/damageReportList?search=$search&areaId=$areaId&distributoryId=$distibutoryId&deviceType=$source&index=$index&limit=$limit&projectId=$projectId',
       options: Options(
         method: 'GET',
       ),

@@ -1,5 +1,6 @@
 // ignore_for_file: unused_field, prefer_typing_uninitialized_variables, unused_local_variable, non_constant_identifier_names, camel_case_types, must_be_immutable, file_names, no_leading_underscores_for_local_identifiers, use_build_context_synchronously
 
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Model/Project/ECMTool/ECM_Checklist_Model.dart';
@@ -54,10 +55,10 @@ class _Offline_ListMySqlState extends State<Offline_ListMySql> {
   void fatchdataSQL() async {
     bool isLoading = false;
     setState(() => isLoading = true);
-    Listdata = await ListViewModel.instance.fatchdataPMSViewList(
+    Listdata = await ListViewModel.instance.fetchByProjectAndDevice(
         widget.ProjectName!, widget.Source!.toLowerCase());
-    datas = await DBSQL.instance.fatchdataSQLNew();
-    ProcessList = await ListModel.instance.fatchdataPMSListData();
+    datas = await DBSQL.instance.fetchAll();
+    ProcessList = await ListModel.instance.fetchAll();
     setState(() => isLoading = false);
   }
 
@@ -131,11 +132,12 @@ class _Offline_ListMySqlState extends State<Offline_ListMySql> {
                     MaterialPageRoute(
                         //this page navigate to node details page
                         builder: (context) => MySql_Screen(
-                              omsId: Listdata[index].omsId,
-                              amsId: Listdata[index].amsId,
-                              getwayId: Listdata[index].gateWayId,
-                              rmsId: Listdata[index].rmsId,
-                              deviceId: datas[index].deviceId,
+                              // omsId: Listdata[index].omsId,
+                              // amsId: Listdata[index].amsId,
+                              // getwayId: Listdata[index].gateWayId,
+                              // rmsId: Listdata[index].rmsId,
+                              deviceId: getDeviceId(
+                                  Listdata[index].deviceType!, index),
                               ProjectName: Listdata.first.projectName,
                               Source: Listdata.first.deviceType,
                               modelDatas: Listdata[index],
@@ -187,6 +189,19 @@ class _Offline_ListMySqlState extends State<Offline_ListMySql> {
     } catch (ex, _) {
       return Container();
     }
+  }
+
+  getDeviceId(String source, int index) {
+    if (source == 'oms') {
+      return Listdata[index].omsId;
+    } else if (source == 'ams') {
+      return Listdata[index].amsId;
+    } else if (source == 'getway') {
+      return Listdata[index].gateWayId;
+    } else if (source == 'rms') {
+      return Listdata[index].rmsId;
+    }
+    return null;
   }
 
   String? getEmsToolName(int index) {

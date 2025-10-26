@@ -1302,7 +1302,7 @@ class _RoutineCheckScreenState extends State<RoutineCheckScreen> {
     final prefs = await SharedPreferences.getInstance();
     final projectId = prefs.getString('ProjectId');
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/routine/routineTime?projectId=$projectId';
+        'http://ecmv2.iotwater.in:3011/api/v1/routine/routineTime?projectId=$projectId';
 
     final response = await http.get(Uri.parse(url));
 

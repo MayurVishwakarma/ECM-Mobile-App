@@ -720,9 +720,9 @@ class _ListCommonScreenState extends State<ListCommonScreen> {
       final projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/damageSummaryList?damageId=$ListStatus&areaId=$area&distributoryId=$distibutory&deviceType=$Source&projectId=$projectId'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/damageSummaryList?damageId=$ListStatus&areaId=$area&distributoryId=$distibutory&deviceType=$Source&projectId=$projectId'));
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/damageSummaryList?damageId=$ListStatus&areaId=$area&distributoryId=$distibutory&deviceType=$Source&projectId=$projectId');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/damageSummaryList?damageId=$ListStatus&areaId=$area&distributoryId=$distibutory&deviceType=$Source&projectId=$projectId');
       // print(
       //     'http://wmsservices.seprojects.in/api/DamageReport/GetDamageCountWithDateFilter_New?DamageId=$ListStatus&areaId=$area&DistributoryId=$distibutory&Source=$Source&conString=$conString');
 

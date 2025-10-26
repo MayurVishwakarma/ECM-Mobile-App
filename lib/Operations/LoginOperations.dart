@@ -8,7 +8,7 @@ final dio = Dio();
 var headers = {'Content-Type': 'application/json'};
 Future<LoginMasterModel?> fetchLoginDetails(dynamic payload) async {
   try {
-    final url = 'http://ecmtest.iotwater.in:3011/api/v1/auth/login';
+    final url = 'http://ecmv2.iotwater.in:3011/api/v1/auth/login';
     var response = await dio.request(
       url,
       options: Options(

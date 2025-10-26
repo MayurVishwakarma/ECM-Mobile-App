@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, file_names, prefer_const_literals_to_create_immutables, sort_child_properties_last, import_of_legacy_library_into_null_safe, use_key_in_widget_constructors, library_private_types_in_public_api, unused_import, unused_element, prefer_interpolation_to_compose_strings, avoid_print, prefer_is_empty, use_build_context_synchronously, prefer_typing_uninitialized_variables, curly_braces_in_flow_control_structures, avoid_unnecessary_containers, must_be_immutable, non_constant_identifier_names, unused_local_variable, unused_catch_stack, unrelated_type_equality_checks, unnecessary_null_comparison, no_leading_underscores_for_local_identifiers, prefer_collection_literals
 import 'dart:convert';
+import 'dart:math';
+import 'package:ecm_application/Model/Common/ProcessMasterModel.dart';
 import 'package:ecm_application/Model/Project/ECMTool/PMSChackListModel.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/ECMToolScreen.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/NodeDetails_SQL.dart';
@@ -59,33 +61,27 @@ class _OmsPageState extends State<OmsPage> {
   var distibutory = 'ALL';
   var process = 'ALL';
   var processStatus = 'ALL';
-
   String? _search = '';
-
   AreaModel? selectedArea;
   DistibutroryModel? selectedDistributory;
   PMSChaklistModel? selectedProcess;
   ProcessModel? selectedProcessStatus;
-
   List<ProcessModel>? ProcessStatusList;
   Future<List<DistibutroryModel>>? futureDistributory;
   Future<List<AreaModel>>? futureArea;
   List<PMSChaklistModel>? ProcessList;
-  // List<DistibutroryModel>? DistriList;
-
   List<PMSListViewModel> listview = [];
-  // List<ECM_Checklist_Model> datas = [];
+
   Future ListcolorChanger() async {
-    listview = await ListViewModel.instance
-        .fatchcommonlist(widget.Source!.toLowerCase(), widget.ProjectName!);
-    // datas = await DBSQL.instance.fatchdataSQL(deviceids);
+    listview = await ListViewModel.instance.fetchByProjectAndDevice(
+        widget.Source!.toLowerCase(), widget.ProjectName!);
   }
 
   Color colorchnger(int index) {
     try {
       for (var item in listview) {
         if (item.omsId == _DisplayList![index].omsId) {
-          return Colors.amber.shade400;
+          return Colors.blue;
         }
       }
       return Colors.blue;
@@ -99,7 +95,7 @@ class _OmsPageState extends State<OmsPage> {
       futureArea = getAreaid();
       futureDistributory = getDistibutoryid();
     });
-    await getProcessid().then((values) {
+    await getProcessid().then((values) async {
       ProcessList = [];
       ProcessStatusList = [];
       var processList = Set();
@@ -167,7 +163,7 @@ class _OmsPageState extends State<OmsPage> {
         ProcessList = newList;
         ProcessStatusList = newStatusList;
       });
-      addlist();
+      await addlist(ProcessList);
     });
   }
 
@@ -384,61 +380,6 @@ class _OmsPageState extends State<OmsPage> {
     }
   }
 
-  /*getProcessStatus(BuildContext context, List<ProcessModel> values) {
-    try {
-      return Container(
-        padding: EdgeInsets.all(5),
-        decoration: BoxDecoration(
-            color: Color.fromARGB(255, 168, 211, 237),
-            borderRadius: BorderRadius.circular(5)),
-        child: DropdownButton(
-          underline: Container(color: Colors.transparent),
-          value: selectedProcessStatus == null ||
-                  (values.where((element) => element == selectedProcessStatus))
-                      .isEmpty
-              ? values.first
-              : selectedProcessStatus,
-          isExpanded: true,
-          items: values.map((ProcessModel processModel) {
-            return DropdownMenuItem<ProcessModel>(
-              value: processModel,
-              child: Center(
-                child: FittedBox(
-                  child: Text(
-                    processModel.processStatusName!,
-                 
-                    softWrap: true,
-                    style: TextStyle(fontSize: 13),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-          onChanged: (textvalue) async {
-            //onAreaChange(textvalue);
-            var data = textvalue as ProcessModel;
-            // var distriFuture = getProcessid();
-            // await distriFuture.then((value) => setState(() {
-            //       selectedProcess = value.first;
-            //       process = "All";
-            //     }));
-            setState(() {
-              selectedProcessStatus = data;
-              // futureProcess = distriFuture;
-
-              processStatus = selectedProcessStatus!.processStatusId.toString();
-            });
-            _firstLoad();
-          },
-        ),
-      );
-    } catch (_, ex) {
-      print(ex);
-      return Container();
-    }
-  }
-*/
-
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -454,211 +395,357 @@ class _OmsPageState extends State<OmsPage> {
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(color: Colors.grey.shade200),
-            child: _DisplayList! != null
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                        //search
-                        Stack(
-                          children: [
-                            Positioned(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black),
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(color: Colors.grey.shade200),
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Stack(
+                      children: [
+                        Positioned(
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      onChanged: (value) async {
+                                        setState(() {
+                                          _search = value;
+                                        });
+                                      },
+                                      cursorColor: Colors.black,
+                                      keyboardType: TextInputType.text,
+                                      textInputAction: TextInputAction.go,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          hintText: "Search"),
+                                    ),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextField(
-                                          onChanged: (value) async {
-                                            setState(() {
-                                              _search = value;
-                                            });
-                                          },
-                                          cursorColor: Colors.black,
-                                          keyboardType: TextInputType.text,
-                                          textInputAction: TextInputAction.go,
-                                          decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      horizontal: 15),
-                                              hintText: "Search"),
-                                        ),
-                                      ),
-                                      IconButton(
-                                        splashColor: Colors.blue,
-                                        icon: Icon(Icons.search),
-                                        onPressed: () {
-                                          getpop(context);
+                                  IconButton(
+                                    splashColor: Colors.blue,
+                                    icon: Icon(Icons.search),
+                                    onPressed: () {
+                                      getpop(context);
 
-                                          setState(() {
-                                            _page = 0;
-                                            _hasNextPage = true;
-                                            _isFirstLoadRunning = false;
-                                            _isLoadMoreRunning = false;
-                                            _DisplayList = <PMSListViewModel>[];
-                                          });
-                                          _firstLoad();
+                                      setState(() {
+                                        _page = 0;
+                                        _hasNextPage = true;
+                                        _isFirstLoadRunning = false;
+                                        _isLoadMoreRunning = false;
+                                        _DisplayList = <PMSListViewModel>[];
+                                      });
+                                      _firstLoad();
 
-                                          Future.delayed(Duration(seconds: 1),
-                                              () {
-                                            Navigator.pop(context); //pop dialog
-                                          });
-                                        },
-                                      ),
-                                    ],
+                                      Future.delayed(Duration(seconds: 1), () {
+                                        Navigator.pop(context); //pop dialog
+                                      });
+                                    },
                                   ),
-                                ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          /// This Future Builder is Used for Area DropDown list
+                          FutureBuilder(
+                            future: futureArea,
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                return Expanded(
+                                    child: getArea(context, snapshot.data!));
+                              } else if (snapshot.hasError) {
+                                return Text(
+                                  "Something Went Wrong: " +
+                                      snapshot.error.toString(),
+                                );
+                              } else {
+                                return Center(child: Container());
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
 
-                        //dropdown
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              /// This Future Builder is Used for Area DropDown list
-                              FutureBuilder(
-                                future: futureArea,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot snapshot) {
-                                  if (snapshot.hasData) {
-                                    return Expanded(
-                                        child:
-                                            getArea(context, snapshot.data!));
-                                  } else if (snapshot.hasError) {
-                                    return Text(
-                                      "Something Went Wrong: " +
-                                          snapshot.error.toString(),
-                                    );
-                                  } else {
-                                    return Center(child: Container());
-                                  }
-                                },
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-
-                              ///This Future Builder is Used for Distibutory DropDown List
-                              FutureBuilder(
-                                future: futureDistributory,
-                                builder: (BuildContext context,
-                                    AsyncSnapshot snapshot) {
-                                  if (snapshot.hasData) {
-                                    return Expanded(
-                                        child:
-                                            getDist(context, snapshot.data!));
-                                  } else if (snapshot.hasError) {
-                                    return Container() /*Text(
+                          ///This Future Builder is Used for Distibutory DropDown List
+                          FutureBuilder(
+                            future: futureDistributory,
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                return Expanded(
+                                    child: getDist(context, snapshot.data!));
+                              } else if (snapshot.hasError) {
+                                return Container() /*Text(
                                   "Something Went Wrong: " /*+
                                       snapshot.error.toString()*/
                                   ,
                                
                                 )*/
-                                        ;
-                                  } else {
-                                    return Center(child: Container());
-                                  }
-                                },
-                              ),
-                            ],
+                                    ;
+                              } else {
+                                return Center(child: Container());
+                              }
+                            },
                           ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              if (ProcessList != null)
-                                Expanded(
-                                    child: getProcess(context, ProcessList!)),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              if (ProcessStatusList != null && process != 'All')
-                                Expanded(
-                                    child: getProcessStatus(
-                                        context,
-                                        ProcessStatusList!
-                                            .where((element) =>
-                                                element.processId ==
-                                                int.tryParse(process))
-                                            .toList())),
-                            ],
-                          ),
-                        ),
-
-                        //listview
-                        Expanded(
-                          child: Scrollbar(
-                            controller: _controller,
-                            interactive: true,
-                            thickness: 10,
-                            radius: Radius.circular(15),
-                            thumbVisibility: true,
-                            child: SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              controller: _controller,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: _isFirstLoadRunning
-                                    ? Center(
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : Column(children: [
-                                        getBody(),
-                                        SizedBox(height: 150),
-                                        if (_isLoadMoreRunning == true)
-                                          Container(),
-                                        if (_hasNextPage == false) Container(),
-                                      ]),
-                              ),
-                            ),
-                          ),
-                        ),
-                      
-                      ])
-                : Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/soon.gif',
-                          width: 200,
-                          height: 200,
-                        ),
-                        SizedBox(height: 20.0),
-                        Text(
-                          'Page under construction',
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-          ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (ProcessList != null)
+                            Expanded(child: getProcess(context, ProcessList!)),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          if (ProcessStatusList != null && process != 'All')
+                            Expanded(
+                                child: getProcessStatus(
+                                    context,
+                                    ProcessStatusList!
+                                        .where((element) =>
+                                            element.processId ==
+                                            int.tryParse(process))
+                                        .toList())),
+                        ],
+                      ),
+                    ),
+                    /* if (ProcessList != null && ProcessList!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Table(
+                          border: TableBorder.all(color: Colors.grey.shade300),
+                          columnWidths: {
+                            0: FixedColumnWidth(
+                                120), // Chak No. column fixed width
+                          },
+                          children: [
+                            TableRow(
+                              decoration: BoxDecoration(color: Colors.blue),
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Text('CHAK NO.',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold)),
+                                      Text('(Distri-Area)',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w600)),
+                                    ],
+                                  ),
+                                ),
+                                for (var process in ProcessList!
+                                    .where((e) => e.processId != 0))
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      ConvertLongtoShortString(
+                                          process.processName!),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    */
+                    Expanded(
+                      child: Scrollbar(
+                        controller: _controller,
+                        interactive: true,
+                        thickness: 10,
+                        radius: Radius.circular(15),
+                        thumbVisibility: true,
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          controller: _controller,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: _isFirstLoadRunning
+                                ? Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Column(children: [
+                                    getBody(),
+                                    // SizedBox(height: 150),
+                                    if (_isLoadMoreRunning == true) Container(),
+                                    if (_hasNextPage == false) Container(),
+                                    if (_DisplayList!.isEmpty)
+                                      Container(
+                                        margin:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                        padding: EdgeInsets.all(8),
+                                        decoration:
+                                            BoxDecoration(color: Colors.white),
+                                        child: Center(
+                                            child: Text(
+                                          'No Result Found',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                      ),
+                                  ]),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ])),
         ),
       ),
     );
   }
+
+  /*
+  getBody() {
+    try {
+      var _processlist =
+          ProcessList!.where((element) => element.processId != 0).toList();
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Table(
+          border: TableBorder.all(color: Colors.grey.shade300),
+          columnWidths: {
+            0: FixedColumnWidth(120), // Chak No. column fixed width
+          },
+          children: [
+            ..._DisplayList!.map((item) {
+              return TableRow(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                children: [
+                  // Chak No. + Area
+                  Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: InkWell(
+                      onTap: () async {
+                        var source = 'oms';
+                        var projectName;
+                        var conString;
+                        SharedPreferences preferences =
+                            await SharedPreferences.getInstance();
+                        preferences.setString(
+                            'Mechanical', item.mechanical.toString());
+                        preferences.setString(
+                            'Erection', item.erection.toString());
+                        preferences.setString(
+                            'DryComm', item.dryCommissioning.toString());
+                        preferences.setString('AutoDryComm',
+                            item.autoDryCommissioning.toString());
+                        conString = preferences.getString('ConString');
+                        projectName = preferences.getString('ProjectName')!;
+
+                        conString!.toString().contains('ID=sa')
+                            ? Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NodeDetails_SQL(
+                                        item, projectName, source, listdatas)),
+                                (Route<dynamic> route) => true,
+                              ).whenComplete(() {
+                                _firstLoad();
+                                getDropDownAsync();
+                                _controller = ScrollController()
+                                  ..addListener(_loadMore);
+                              })
+                            : Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => NodeDetails(
+                                        item,
+                                        projectName,
+                                        source,
+                                        viewdata!,
+                                        listdatas)),
+                                (Route<dynamic> route) => true,
+                              ).whenComplete(() {
+                                _firstLoad();
+                                getDropDownAsync();
+                                _controller = ScrollController()
+                                  ..addListener(_loadMore);
+                              });
+
+                        setState(() {
+                          viewdata = item;
+                          listdatas = item.omsId;
+                        });
+                      },
+                      child: Column(
+                        children: [
+                          Text(item.chakNo ?? '',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 12)),
+                          Text(
+                            "(${item.areaName} - ${item.description})",
+                            style: TextStyle(fontSize: 10, color: Colors.blue),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Process Status Images
+                  ..._processlist.map((process) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        getprocessstatus(
+                          process.processName!,
+                          getProStatus(process.processName!, item),
+                        ),
+                        height: 20,
+                      ),
+                    );
+                  }),
+                ],
+              );
+            }),
+          ],
+        ),
+      );
+    } catch (ex, _) {
+      return Container();
+    }
+  }
+*/
 
   getBody() {
     try {
@@ -1089,9 +1176,20 @@ class _OmsPageState extends State<OmsPage> {
     }
   }
 */
-  Future addlist() async {
-    for (int i = 0; i <= ProcessList!.length; i++) {
-      final data = ProcessList![i];
+
+  Future addlist(List<PMSChaklistModel>? process) async {
+    final existingList = await ListModel.instance.fetchAll();
+    for (int i = 0; i < process!.length; i++) {
+      final data = process[i];
+      final exists = existingList.any((item) =>
+          item.processId == data.processId &&
+          item.processName == data.processName);
+      if (!exists) {
+        await ListModel.instance.insert(data.toJson());
+      }
+    }
+    for (int i = 0; i <= process.length; i++) {
+      final data = process[i];
       ListModel.instance.insert(data.toJson());
     }
   }

@@ -74,7 +74,7 @@ Future<List<ProjectModel>> getStateAuthority() async {
       throw Exception('User ID not found in SharedPreferences');
 
     final String url =
-        'http://ecmtest.iotwater.in:3011/api/v1/auth/projects/$userid/all';
+        'http://ecmv2.iotwater.in:3011/api/v1/auth/projects/$userid/all';
 
     print(url);
 
@@ -105,9 +105,9 @@ Future<List<AreaModel>> getAreaid() async {
     String? conString = preferences.getString('ConString');
     String? projectId = preferences.getString('ProjectId');
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/project/area/$projectId'));
+        'http://ecmv2.iotwater.in:3011/api/v1/project/area/$projectId'));
 
-    print('http://ecmtest.iotwater.in:3011/api/v1/project/area/$projectId');
+    print('http://ecmv2.iotwater.in:3011/api/v1/project/area/$projectId');
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
@@ -137,9 +137,9 @@ Future<List<DistibutroryModel>> getDistibutoryid(
     String? conString = preferences.getString('ConString');
     String? projectId = preferences.getString('ProjectId');
     final response = await http.get(Uri.parse(
-        'http://ecmtest.iotwater.in:3011/api/v1/project/distributory/$projectId/$areaId'));
+        'http://ecmv2.iotwater.in:3011/api/v1/project/distributory/$projectId/$areaId'));
     print(
-        'http://ecmtest.iotwater.in:3011/api/v1/project/distributory/$projectId/$areaId');
+        'http://ecmv2.iotwater.in:3011/api/v1/project/distributory/$projectId/$areaId');
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
@@ -164,12 +164,13 @@ Future<List<PMSChaklistModel>> getProcessid({String source = 'OMS'}) async {
   try {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? conString = preferences.getString('ConString');
+    final projectId = preferences.getString('ProjectId');
 
     final response = await http.get(Uri.parse(
-        'http://wmsservices.seprojects.in/api/PMS/ECMProcessId?Source=$source&conString=$conString'));
+        'http://ecmv2.iotwater.in:3011/api/v1/ecm/processlist/$projectId/$source'));
 
     print(
-        'http://wmsservices.seprojects.in/api/PMS/ECMProcessId?Source=$source&conString=$conString');
+        'http://ecmv2.iotwater.in:3011/api/v1/ecm/processlist/$projectId/$source');
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
@@ -190,7 +191,6 @@ Future<List<PMSChaklistModel>> getProcessid({String source = 'OMS'}) async {
     throw Exception('Failed to load API');
   }
 }
-
 
 Future<List<PMSListViewModel>>? getProjectNodeList(
     String source, String conString) async {

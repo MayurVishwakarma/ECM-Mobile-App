@@ -1183,10 +1183,10 @@ class _Lora_MaterialConsumptionState extends State<Lora_MaterialConsumption> {
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/LORA'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/LORA'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/LORA');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/LORA');
 
       var json = jsonDecode(res.body);
       List<MatetrialConsumption> fetchedData = <MatetrialConsumption>[];

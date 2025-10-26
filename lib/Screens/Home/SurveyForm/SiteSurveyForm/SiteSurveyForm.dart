@@ -8,8 +8,10 @@ import 'package:ecm_application/Model/Project/Damage/SurveyInsertModel%20.dart';
 import 'package:ecm_application/Services/RestDamage.dart';
 import 'package:ecm_application/Model/Common/EngineerModel.dart';
 import 'package:ecm_application/Model/project/Constants.dart';
+import 'package:ecm_application/Services/RestPmsService.dart';
 import 'package:ecm_application/core/constants/OMSComponent.dart';
 import 'package:ecm_application/core/utils/Common_utils.dart';
+import 'package:ecm_application/core/utils/ImagePriviewWidget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ecm_application/Widget/ExpandableTiles.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +20,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_watermark/image_watermark.dart';
 import 'package:open_file/open_file.dart';
-
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_view/photo_view.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,6 +74,11 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
   Widget? _widget;
   List<SurveyInsertModel> imageList = [];
   List<SurveyInsertModel>? _ChecklistModel;
+  Set<String>? processList;
+  var getworkby;
+  var getapproveby;
+  bool isLoading = false;
+  String buttonText = 'Edit';
 
   Future<String> getCurrentLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -438,7 +442,6 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
     );
   }
 
-  String buttonText = 'Edit';
   base64ToPdf(String base64String, String fileName) async {
     var bytes = base64Decode(base64String);
     final output = await getTemporaryDirectory();
@@ -605,7 +608,7 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
                               backgroundColor: Colors.blue),
                         ),
 
-                        if (remarkval.isNotEmpty)
+                        if (workedondate.isNotEmpty)
                           Padding(
                               padding: EdgeInsets.all(8),
                               child: Container(
@@ -743,8 +746,6 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
     return title;
   }
 
-  Set<String>? processList;
-
   getWorkedByNAme(String userid) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -772,10 +773,6 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
       return '';
     }
   }
-
-   var getworkby;
-  var getapproveby;
-  bool isLoading = false;
 
   getDamageFeed() {
     Widget? widget = const Center(child: CircularProgressIndicator());
@@ -2250,7 +2247,8 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
                                     ],
                                   ),
                                 ),
-/*                              Expanded(
+/*                              
+Expanded(
                                     flex: 2,
                                     child: Column(
                                       children: [
@@ -2709,9 +2707,6 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
           respflag = await insertDamageReportCommon(
               _checkList, modelData!.rmsId!, widget.Source!);
         }
-        // else if (widget.Source == 'lora') {
-        //   respflag = await insertLoraDamageReport(_checkList, modelData!.omsId!, widget.Source!);
-        // }
 
         if (respflag) {
           getECMData();
@@ -2727,88 +2722,6 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
     return flag;
   }
 
-//image uploaded by damage
-  Future<String?> uploadImage(String ImagePath, XFile? image) async {
-    try {
-      if (image == null || image.path.isEmpty) {
-        debugPrint("Image is null or path is empty.");
-        return '';
-      }
-
-      // Log the image path for debugging
-      debugPrint("Uploading image from path: ${image.path}");
-
-      // Create the multipart file
-      var imgData = await http.MultipartFile.fromPath('Image', image.path);
-
-      // Create the request
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-            'http://wmsservices.seprojects.in/api/PMS?imgDirPath=$ImagePath&Api=2'),
-      );
-
-      request.files.add(imgData);
-
-      // Log the request details
-      debugPrint("Request prepared: $request");
-
-      // Send the request
-      http.StreamedResponse response = await request.send();
-
-      // Handle the response
-      if (response.statusCode == 200) {
-        debugPrint("Image uploaded successfully.");
-        var path = await response.stream.bytesToString();
-        if (path == '""') {
-          debugPrint("Empty path returned by the server.");
-          return '';
-        } else {
-          debugPrint("Server returned path: $path");
-          return path.replaceAll('"', '');
-        }
-      } else {
-        debugPrint(
-            "Failed to upload image. Status code: ${response.statusCode}");
-        return '';
-      }
-    } catch (e) {
-      // Catch any errors and log them
-      debugPrint("Error during image upload: $e");
-      return '';
-    }
-  }
-
-  /*Future<String?> uploadImage(String ImagePath, XFile? image) async {
-    try {
-      var imgData = await http.MultipartFile.fromPath('Image', image!.path);
-
-      var request = http.MultipartRequest(
-          'POST',
-          Uri.parse(
-              'http://wmsservices.seprojects.in/api/PMS?imgDirPath=$ImagePath&Api=2'));
-
-      request.files.add(imgData);
-
-      http.StreamedResponse response = await request.send();
-
-      if (response.statusCode == 200) {
-        var path = await response.stream.bytesToString();
-        if (path == '""') {
-          return '';
-        } else {
-          return path.replaceAll('"', '');
-        }
-      } else {
-        return '';
-      }
-    } catch (_, ex) {
-      debugPrint("ERROR:${ex.toString()}");
-    }
-    return '';
-  }
-*/
-//Damage form insert
   Future<bool> insertDamageReportCommon(
       List<SurveyInsertModel> imageList, int Id, String source) async {
     try {
@@ -2817,6 +2730,7 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
       var projectName =
           preferences.getString('ProjectName')!.replaceAll(' ', '_');
       var proUserId = preferences.getInt('ProUserId');
+      final projectId = preferences.getString('ProjectId');
       int omsId = getDeviceid(source);
       var imagePath = "$projectName/$source/$Id/";
       int countflag = 0;
@@ -2826,7 +2740,11 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
           .where((element) =>
               element.inputType == 'Image' && element.image != null)
           .map((element) async {
-        String? imagePathValue = await uploadImage(imagePath, element.image);
+        String? imagePathValue = await uploadImageAndGetPath(
+          element.image!.path,
+          source.toUpperCase(),
+          int.tryParse(projectId ?? '0')!,
+        );
 
         if (imagePathValue!.isNotEmpty) {
           element.value = imagePathValue;
@@ -2837,29 +2755,26 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
 
       var checkListId = imageList.map((e) => e.surveyId).toList().join(",");
       var valueData = imageList.map((e) => e.value ?? '').toList().join(",");
-      var Insertobj = Map<String, dynamic>();
-      if (source == 'oms') {
-        Insertobj["omsid"] = Id;
-      } else if (source == 'ams') {
-        Insertobj["amsid"] = Id;
-      } else if (source == 'rms') {
-        Insertobj["rmsid"] = Id;
-      } else if (source == 'lora') {
-        Insertobj["gatewayid"] = Id;
-      }
-      Insertobj["userid"] = proUserId.toString();
-      Insertobj["Damagedata"] = checkListId;
-      Insertobj["Valuedata"] = valueData;
-      Insertobj["conString"] = conString;
-      Insertobj["status"] = "ok";
-      Insertobj["remark"] = _remarkController!;
-
+      var data = json.encode({
+        "deviceId": getDeviceid(widget.Source!),
+        "userid": proUserId.toString(),
+        "Checklistid": checkListId,
+        "values": valueData,
+        "remark": _remarkController,
+        "deviceType": widget.Source!.toUpperCase(),
+        "projectId": projectId
+      });
       if (countflag == uploadflag) {
+        var result = await uploadSurveyReport(data);
+
+        return result;
+      } else {
+        return false;
+      }
+      /* if (countflag == uploadflag) {
         var headers = {'Content-Type': 'application/json'};
-        final request = http.Request(
-            "POST",
-            Uri.parse(
-                'http://wmsservices.seprojects.in/api/OMS/InsertOmsSurveyReport'));
+        final request =
+            http.Request("POST", Uri.parse('survey/saveSurveyReport'));
         request.headers.addAll(headers);
         request.body = json.encode(Insertobj);
         print(request.body);
@@ -2872,66 +2787,9 @@ class _SurveyInsertPageState extends State<SurveyInsertPage> {
             throw Exception();
           }
         } else {}
-      } else {}
-      throw Exception();
+      } else {}*/
     } catch (_) {
       throw Exception();
     }
-  }
-
-/*
-//image uploaded by information
-  Future<String> uploadimages(String imagePath, XFile? image) async {
-    try {
-      var uri = Uri.parse(
-          'http://wmsservices.seprojects.in/api/Information?imgDirPath=$imagePath&Api=2');
-      var request = http.MultipartRequest('POST', uri)
-        ..files.add(await http.MultipartFile.fromPath('file', image!.path))
-        ..fields['fieldKey'] =
-            'fieldValue'; // Add any additional fields if needed
-
-      var response = await http.Response.fromStream(await request.send());
-
-      if (response.statusCode == 200) {
-        var jsonResponse = json.decode(response.body);
-        return jsonResponse['data'] as String;
-      } else {
-        return "";
-      }
-    } catch (error) {
-      return "";
-    }
-  }
-*/
-}
-
-class InsertObjectModel {
-  String? processId;
-  String? subProcessId;
-  String? checkListData;
-  String? Id;
-  String? userId;
-  String? valuedata;
-  String? Remark;
-  String? TempDT;
-  String? ApprovedStatus;
-  String? Source;
-  String? conString;
-  bool? IsSiteTeamEngineerAvailable;
-  String? SiteTeamEngineer;
-}
-
-class PreviewImageWidget extends StatelessWidget {
-  Uint8List? bytearray;
-  PreviewImageWidget(this.bytearray) {
-    super.key;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Preview Image')),
-      body: PhotoView(imageProvider: MemoryImage(bytearray!)),
-    );
   }
 }

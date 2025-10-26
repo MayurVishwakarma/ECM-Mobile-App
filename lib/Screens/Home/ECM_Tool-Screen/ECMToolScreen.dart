@@ -98,7 +98,7 @@ class _EcmToolScreenState extends State<EcmToolScreen> {
                       height: 18,
                       width: 18),
                   onTap: () async {
-                    conString!.toString().contains('ID=sa')
+                    /*conString!.toString().contains('ID=sa')
                         ? Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
@@ -106,13 +106,14 @@ class _EcmToolScreenState extends State<EcmToolScreen> {
                                     ProjectName: projectName, Source: source)),
                             (Route<dynamic> route) => true,
                           )
-                        : Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Offline_ListMySql(
-                                    ProjectName: projectName, Source: source)),
-                            (Route<dynamic> route) => true,
-                          );
+                        :*/
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Offline_ListMySql(
+                              ProjectName: projectName, Source: source)),
+                      (Route<dynamic> route) => true,
+                    );
                     setState(() {
                       isToggled = false;
                     });
@@ -136,7 +137,6 @@ class _EcmToolScreenState extends State<EcmToolScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              // border: Border.all(color: ColorConstant.black900),
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
@@ -1953,7 +1953,6 @@ class _EcmToolScreenState extends State<EcmToolScreen> {
           );
         }).toList(),
         onChanged: (textvalue) async {
-          //onAreaChange(textvalue);
           var data = textvalue as AreaModel;
           var distriFuture = getDistibutoryid(
               areaId: data.areaid == 0 ? 'All' : data.areaid.toString());
@@ -1971,14 +1970,6 @@ class _EcmToolScreenState extends State<EcmToolScreen> {
             isload = true;
           });
           await getECMReportStatusCoun();
-          // await GetOmsOverviewModel();
-          // setState(() {
-          //   try {
-          //     selectedState = textvalue as AreaModel;
-          //   } catch (_, ex) {
-          //     print(ex);
-          //   }
-          // });
         },
       ),
     );
@@ -2000,16 +1991,17 @@ class _EcmToolScreenState extends State<EcmToolScreen> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
       conString = preferences.getString('ConString');
+      final projectId = preferences.getString('ProjectId');
 
       final response = await http.get(Uri.parse(
-          'http://wmsservices.seprojects.in/api/PMS/ECMReportStatusCount?Search=&areaId=$area&DistributoryId=$distibutory&Process=all&ProcessStatus=all&Source=$source&conString=$conString'));
+          'http://ecmv2.iotwater.in:3011/api/v1/ecm/ecmreportcount?search&areaId=$area&distributoryId=$distibutory&processId=all&subProcessId=all&deviceType=$source&projectId=$projectId'));
       print(
-          'http://wmsservices.seprojects.in/api/PMS/ECMReportStatusCount?Search=&areaId=$area&DistributoryId=$distibutory&Process=all&ProcessStatus=all&Source=$source&conString=$conString');
+          'http://ecmv2.iotwater.in:3011/api/v1/ecm/ecmreportcount?search&areaId=$area&distributoryId=$distibutory&processId=all&subProcessId=all&deviceType=$source&projectId=$projectId');
       if (response.statusCode == 200) {
         var json = jsonDecode(response.body);
 
         ECMStatusCountMasterModel result =
-            ECMStatusCountMasterModel.fromJson(json['data']['Response']);
+            ECMStatusCountMasterModel.fromJson(json['data']['Response'][0]);
 
         print(result.sCount);
         setState(() {
@@ -2024,18 +2016,4 @@ class _EcmToolScreenState extends State<EcmToolScreen> {
       throw Exception('Failed to load API');
     }
   }
-
-}
-
-class ProcessModel {
-  int? processId;
-  String? processName;
-  String? processStatusId;
-  String? processStatusName;
-
-  ProcessModel(
-      {this.processId,
-      this.processName,
-      this.processStatusId,
-      this.processStatusName});
 }

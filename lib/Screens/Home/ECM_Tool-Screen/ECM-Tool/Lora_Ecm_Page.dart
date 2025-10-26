@@ -2,6 +2,7 @@
 // import 'package:custom_switch/custom_switch.dart';
 import 'dart:convert';
 
+import 'package:ecm_application/Model/Common/ProcessMasterModel.dart';
 import 'package:ecm_application/Model/Project/ECMTool/PMSChackListModel.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/ECMToolScreen.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/NodeDetails_SQL.dart';
@@ -89,8 +90,8 @@ class _LoraPageState extends State<LoraPage>
   List<PMSListViewModel> listview = [];
   // List<ECM_Checklist_Model> datas = [];
   Future ListcolorChanger() async {
-    listview = await ListViewModel.instance
-        .fatchcommonlist(widget.Source!.toLowerCase(), widget.ProjectName!);
+    listview = await ListViewModel.instance.fetchByProjectAndDevice(
+        widget.Source!.toLowerCase(), widget.ProjectName!);
     // datas = await DBSQL.instance.fatchdataSQL(deviceids);
   }
 
