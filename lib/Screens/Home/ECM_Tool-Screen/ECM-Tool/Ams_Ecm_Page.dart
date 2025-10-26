@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, file_names, prefer_const_literals_to_create_immutables, sort_child_properties_last, import_of_legacy_library_into_null_safe, use_key_in_widget_constructors, library_private_types_in_public_api, unused_import, unused_element, prefer_interpolation_to_compose_strings, avoid_print, prefer_is_empty, unused_field, prefer_final_fields, non_constant_identifier_names, prefer_collection_literals, use_build_context_synchronously, unnecessary_null_comparison, unused_local_variable, must_be_immutable, unused_catch_stack, prefer_typing_uninitialized_variables, no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
+import 'package:ecm_application/Model/Common/ProcessMasterModel.dart';
 import 'package:ecm_application/Model/Project/ECMTool/PMSChackListModel.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/ECMToolScreen.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/NodeDetails_SQL.dart';
@@ -38,8 +39,8 @@ class _AmsPageState extends State<AmsPage> with SingleTickerProviderStateMixin {
 
   List<PMSListViewModel> listview = [];
   Future ListcolorChanger() async {
-    listview = await ListViewModel.instance
-        .fatchcommonlist(widget.Source!.toLowerCase(), widget.ProjectName!);
+    listview = await ListViewModel.instance.fetchByProjectAndDevice(
+        widget.Source!.toLowerCase(), widget.ProjectName!);
   }
 
   @override

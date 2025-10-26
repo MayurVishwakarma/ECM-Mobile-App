@@ -3,44 +3,118 @@
 import 'dart:convert';
 import 'package:ecm_application/Model/Project/Login/LoginModel.dart';
 import 'package:ecm_application/Operations/LoginOperations.dart';
+import 'package:ecm_application/Provider/InternetProvider.dart';
 import 'package:ecm_application/Screens/Login/Dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 98, 182, 183),
-                Color.fromARGB(255, 151, 222, 206),
-              ],
-            ),
+    final ip = Provider.of<InternetProvider>(context);
+
+    Widget child;
+
+    switch (ip.connectionStatus) {
+      case 'checking':
+        child = const Center(child: CircularProgressIndicator());
+        break;
+
+      case 'connected':
+        child = _buildLoginUI(); // 👈 put your login stack/gradient here
+        break;
+
+      case 'disconnected':
+        child = const Center(
+          child: Text(
+            "No Internet Connection",
+            style: TextStyle(fontSize: 16, color: Colors.red),
           ),
-          child: Stack(
-            children: [
-              _buildLogoSection(),
-              const Positioned(
-                bottom: 0,
-                left: 0.1,
-                right: 0.1,
-                child: LoginFormWidget(),
-              ),
+        );
+        break;
+
+      default:
+        child = const Center(child: CircularProgressIndicator());
+    }
+
+    return Scaffold(body: child);
+  }
+
+  Widget _buildLoginUI() {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        height: MediaQuery.of(context).size.height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 98, 182, 183),
+              Color.fromARGB(255, 151, 222, 206),
             ],
           ),
+        ),
+        child: Stack(
+          children: [
+            _buildLogoSection(),
+            const Positioned(
+              bottom: 0,
+              left: 0.1,
+              right: 0.1,
+              child: LoginFormWidget(),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  /*@override
+  Widget build(BuildContext context) {
+    final ip = Provider.of<InternetProvider>(context);
+    return Scaffold(
+      body: ip.connectionStatus == 'connected'
+          ? GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 98, 182, 183),
+                      Color.fromARGB(255, 151, 222, 206),
+                    ],
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    _buildLogoSection(),
+                    const Positioned(
+                      bottom: 0,
+                      left: 0.1,
+                      right: 0.1,
+                      child: LoginFormWidget(),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : Center(child: Text("No Internet Connection")),
+    );
+  }
+*/
   Widget _buildLogoSection() {
     return Align(
       alignment: Alignment.topCenter,

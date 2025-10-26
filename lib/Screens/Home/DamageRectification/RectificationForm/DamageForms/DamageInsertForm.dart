@@ -1742,7 +1742,7 @@ class _DamageInsertState extends State<DamageInsert> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? projectId = preferences.getString('ProjectId');
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId'));
+          'http://ecmv2.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId'));
       if (res.statusCode == 200) {
         var json = jsonDecode(res.body);
         if (json['Status'] == WebApiStatusOk) {
@@ -1921,30 +1921,90 @@ class _DamageInsertState extends State<DamageInsert> {
 // =============== Row Builders =================
 
   Widget _buildDamageRow(dynamic item) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
       children: [
-        Expanded(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(item.damage ?? ''),
-              if (_isHindi)
-                Text(
-                  "(${_originalDescriptions[_ChecklistModel!.indexOf(item)]})",
-                  style: const TextStyle(fontSize: 12),
-                ),
-            ],
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.damage ?? ''),
+                  if (_isHindi)
+                    Text(
+                      "(${_originalDescriptions[_ChecklistModel!.indexOf(item)]})",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 20),
+            item.damage?.contains('Firmware') ?? false
+                ? Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      initialValue: item.value,
+                      enabled: true, // always enable, but control via handler
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blue)),
+                      ),
+                      onChanged: (val) {
+                        _handleValueChange(() {
+                          setState(() => item.value = val);
+                        });
+                      },
+                    ),
+                  )
+                : Expanded(
+                    flex: 0,
+                    child: Checkbox(
+                      activeColor: Colors.white54,
+                      checkColor: const Color.fromARGB(255, 251, 3, 3),
+                      value: item.value == '1',
+                      onChanged: (_) {
+                        _handleValueChange(() {
+                          setState(() => item.value = _! ? '1' : '');
+                        });
+                      },
+                    ),
+                  ),
+          ],
         ),
-        const SizedBox(width: 20),
-        item.damage?.contains('Firmware') ?? false
-            ? Expanded(
+        Divider(
+          color: Colors.black,
+          height: 1,
+        )
+      ],
+    );
+  }
+
+  Widget _buildMaterialRow(dynamic item) {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 15,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.rectification ?? ''),
+                  if (_isHindi)
+                    Text(
+                        "(${_originalMaterialList[_MaterialCheckListModel!.indexOf(item)]})"),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
                 flex: 1,
                 child: TextFormField(
                   initialValue: item.value,
-                  enabled: true, // always enable, but control via handler
+                  enabled: isEdit, // always enable, but control via handler
                   decoration: const InputDecoration(
                     enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.blue)),
@@ -1954,58 +2014,14 @@ class _DamageInsertState extends State<DamageInsert> {
                       setState(() => item.value = val);
                     });
                   },
-                ),
-              )
-            : Expanded(
-                flex: 0,
-                child: Checkbox(
-                  activeColor: Colors.white54,
-                  checkColor: const Color.fromARGB(255, 251, 3, 3),
-                  value: item.value == '1',
-                  onChanged: (_) {
-                    _handleValueChange(() {
-                      setState(() => item.value = _! ? '1' : '');
-                    });
-                  },
-                ),
-              ),
-      ],
-    );
-  }
-
-  Widget _buildMaterialRow(dynamic item) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 15,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(item.rectification ?? ''),
-              if (_isHindi)
-                Text(
-                    "(${_originalMaterialList[_MaterialCheckListModel!.indexOf(item)]})"),
-            ],
-          ),
+                )),
+            const Spacer(flex: 2),
+          ],
         ),
-        const SizedBox(width: 10),
-        Expanded(
-            flex: 1,
-            child: TextFormField(
-              initialValue: item.value,
-              enabled: isEdit, // always enable, but control via handler
-              decoration: const InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue)),
-              ),
-              onChanged: (val) {
-                _handleValueChange(() {
-                  setState(() => item.value = val);
-                });
-              },
-            )),
-        const Spacer(flex: 2),
+        Divider(
+          color: Colors.black,
+          height: 1,
+        )
       ],
     );
   }

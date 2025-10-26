@@ -227,47 +227,47 @@ class NodeHistoryWidget extends StatelessWidget {
   final EcmHistoryModel data;
   final String deviceType;
 
-  getprocessstatus(String pro, int proStatus) {
-    String imagepath = 'assets/images/pending.png';
-    try {
-      if (pro.toLowerCase().contains('auto')) {
-        if (proStatus == 1) {
-          imagepath = 'assets/images/Completed.png';
-        } else if (proStatus == 2) {
-          imagepath = 'assets/images/fullydone.png';
-        } else if (proStatus == 3) {
-          imagepath = 'assets/images/Commented.png';
-        } else {
-          imagepath = 'assets/images/notcompletted.png';
-        }
-      } else if (pro.toLowerCase().contains('dry comm')) {
-        if (proStatus == 1) {
-          imagepath = 'assets/images/Completed.png';
-        } else if (proStatus == 2) {
-          imagepath = 'assets/images/fullydone.png';
-        } else if (proStatus == 3) {
-          imagepath = 'assets/images/Commented.png';
-        } else {
-          imagepath = 'assets/images/notcompletted.png';
-        }
-      } else {
-        if (proStatus == 1) {
-          imagepath = 'assets/images/Partially.png';
-        } else if (proStatus == 2) {
-          imagepath = 'assets/images/Completed.png';
-        } else if (proStatus == 3) {
-          imagepath = 'assets/images/fullydone.png';
-        } else if (proStatus == 4) {
-          imagepath = 'assets/images/Commented.png';
-        } else {
-          imagepath = 'assets/images/notcompletted.png';
-        }
-      }
-    } catch (ex, _) {
-      imagepath = 'assets/images/notcompletted.png';
-    }
-    return imagepath;
-  }
+  // getprocessstatus(String pro, int proStatus) {
+  //   String imagepath = 'assets/images/pending.png';
+  //   try {
+  //     if (pro.toLowerCase().contains('auto')) {
+  //       if (proStatus == 1) {
+  //         imagepath = 'assets/images/Completed.png';
+  //       } else if (proStatus == 2) {
+  //         imagepath = 'assets/images/fullydone.png';
+  //       } else if (proStatus == 3) {
+  //         imagepath = 'assets/images/Commented.png';
+  //       } else {
+  //         imagepath = 'assets/images/notcompletted.png';
+  //       }
+  //     } else if (pro.toLowerCase().contains('dry comm')) {
+  //       if (proStatus == 1) {
+  //         imagepath = 'assets/images/Completed.png';
+  //       } else if (proStatus == 2) {
+  //         imagepath = 'assets/images/fullydone.png';
+  //       } else if (proStatus == 3) {
+  //         imagepath = 'assets/images/Commented.png';
+  //       } else {
+  //         imagepath = 'assets/images/notcompletted.png';
+  //       }
+  //     } else {
+  //       if (proStatus == 1) {
+  //         imagepath = 'assets/images/Partially.png';
+  //       } else if (proStatus == 2) {
+  //         imagepath = 'assets/images/Completed.png';
+  //       } else if (proStatus == 3) {
+  //         imagepath = 'assets/images/fullydone.png';
+  //       } else if (proStatus == 4) {
+  //         imagepath = 'assets/images/Commented.png';
+  //       } else {
+  //         imagepath = 'assets/images/notcompletted.png';
+  //       }
+  //     }
+  //   } catch (ex, _) {
+  //     imagepath = 'assets/images/notcompletted.png';
+  //   }
+  //   return imagepath;
+  // }
 
   String getApprovestatus(String pro, int proStatus) {
     String imagepath = 'Pending';

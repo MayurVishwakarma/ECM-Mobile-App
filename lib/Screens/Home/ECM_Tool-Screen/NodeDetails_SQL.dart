@@ -161,9 +161,9 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
 
   Future fatchdataSQL() async {
     setState(() => isLoading = true);
-    Listdata = await ListViewModel.instance.fatchdataPMSViewData();
-    datas = await DBSQL.instance.fatchdataSQLAll(deviceids, processId!);
-    //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+    Listdata = await ListViewModel.instance.fetchData();
+    datas = await DBSQL.instance.fetchByProcess(deviceids, processId!);
+    //  listdistinctProcesss = await ListModel.instance.fetchAll();
     setState(() => isLoading = false);
   }
 
@@ -172,10 +172,10 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
     if (modelData!.omsId != 0) {
       setState(() => isLoading = true);
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
       datasoff =
-          await DBSQL.instance.fatchdataSQLAll(modelData!.omsId!, proccessid!);
+          await DBSQL.instance.fetchByProcess(modelData!.omsId!, proccessid!);
       setState(() => isLoading = false);
     }
   }
@@ -184,12 +184,12 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
   Future fatchFirstloadams() async {
     if (modelData!.amsId != 0) {
       setState(() => isLoading = true);
-      datasoff = await DBSQL.instance.fatchdataSQLNew();
+      datasoff = await DBSQL.instance.fetchAll();
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
       datasoff =
-          await DBSQL.instance.fatchdataSQLAll(modelData!.amsId!, proccessid!);
+          await DBSQL.instance.fetchByProcess(modelData!.amsId!, proccessid!);
 
       setState(() => isLoading = false);
     }
@@ -201,10 +201,10 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
       setState(() => isLoading = true);
       // datas11 = await DBSQL.instance.fatchdataSQLNew();
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
       datasoff = await DBSQL.instance
-          .fatchdataSQLAll(modelData!.gateWayId!, proccessid!);
+          .fetchByProcess(modelData!.gateWayId!, proccessid!);
 
       setState(() => isLoading = false);
     }
@@ -216,10 +216,10 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
       setState(() => isLoading = true);
       // datas11 = await DBSQL.instance.fatchdataSQLNew();
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
       datasoff =
-          await DBSQL.instance.fatchdataSQLAll(modelData!.rmsId!, proccessid!);
+          await DBSQL.instance.fetchByProcess(modelData!.rmsId!, proccessid!);
 
       setState(() => isLoading = false);
     }
@@ -229,30 +229,27 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
   Future fatchdata11() async {
     if (widget.listdatas == modelData!.omsId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11oms(widget.listdatas!);
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByOmsId(widget.listdatas!);
       setState(() => isLoading = false);
     }
     if (widget.listdatas == modelData!.amsId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11Ams(widget.listdatas!);
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByAmsId(widget.listdatas!);
       setState(() => isLoading = false);
     }
     if (widget.listdatas == modelData!.rmsId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11rms(widget.listdatas!);
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByRmsId(widget.listdatas!);
       setState(() => isLoading = false);
     }
     if (widget.listdatas == modelData!.gateWayId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata = await ListViewModel.instance
-          .fatchdataPMSView11getway(widget.listdatas!);
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata =
+          await ListViewModel.instance.fetchByGatewayId(widget.listdatas!);
       setState(() => isLoading = false);
     }
   }
@@ -1648,8 +1645,6 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
     }
   }
 
-
-
   Future<void> getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -2528,7 +2523,7 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
     }
     for (int i = 0; i <= lsitdata!.length; i++) {
       final data = lsitdata![i];
-      DBSQL.instance.SQLUpdatedata(data);
+      DBSQL.instance.updateChecklist(data);
     }
   }
 
@@ -2543,7 +2538,7 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
       modelData!.projectName = widget.ProjectName;
       modelData!.deviceType = widget.Source;
       final data = modelData!;
-      ListViewModel.instance.NewUpdatedata(data);
+      ListViewModel.instance.update(data);
     }
   }
 
@@ -2604,8 +2599,7 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           await listdatacheckup();
-          await DBSQL.instance.deleteCheckListData(
-              datasoff.first.deviceId!, datasoff.first.processId!);
+          await DBSQL.instance.deleteChecklist(datasoff.first);
 
           getECMData(selectedProcess!);
           setState(() {
@@ -2624,15 +2618,15 @@ class _NodeDetails_SQLState extends State<NodeDetails_SQL> {
 //using delete check list data
   Future listdatacheckup() async {
     if (modelData!.omsId != 0) {}
-    await ListViewModel.instance.deleteListDataoms(modelData!.omsId!);
+    await ListViewModel.instance.deleteOms(modelData!.omsId!);
     if (modelData!.amsId != 0) {
-      await ListViewModel.instance.deleteListDataams(modelData!.amsId!);
+      await ListViewModel.instance.deleteAms(modelData!.amsId!);
     }
     if (modelData!.rmsId != 0) {
-      await ListViewModel.instance.deleteListDatarms(modelData!.rmsId!);
+      await ListViewModel.instance.deleteRms(modelData!.rmsId!);
     }
     if (modelData!.gateWayId != 0) {
-      await ListViewModel.instance.deleteListDatagetway(modelData!.gateWayId!);
+      await ListViewModel.instance.deleteGateway(modelData!.gateWayId!);
     }
   }
 

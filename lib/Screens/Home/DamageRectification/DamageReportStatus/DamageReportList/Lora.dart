@@ -884,10 +884,10 @@ class _Lora_ReportListState extends State<Lora_ReportList> {
       final projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/LORA/$area/$distibutory'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/LORA/$area/$distibutory'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/LORA/$area/$distibutory');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/LORA/$area/$distibutory');
 
       var json = jsonDecode(res.body);
       List<DamageReport> fetchedData = <DamageReport>[];

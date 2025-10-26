@@ -107,6 +107,10 @@ class _NodeDetailsState extends State<NodeDetails> {
   List<String> _originalDescriptions = [];
   List<String> _originalSubProcess = [];
   List<String> _subprocessList = [];
+  // Controllers for inputs
+  final TextEditingController _remarkoffController = TextEditingController();
+  final TextEditingController _siteEngineerTeamOffController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -144,75 +148,6 @@ class _NodeDetailsState extends State<NodeDetails> {
     setState(() {
       _isConnected = status == InternetStatus.connected;
     });
-  }
-
-  Future fatchFirstloadoms() async {
-    if (modelData!.omsId != 0) {
-      setState(() => isLoading = true);
-      Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-      datasoff = await DBSQL.instance.fatchdataSQLAll(modelData!.omsId!, psId!);
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future fatchFirstloadams() async {
-    if (modelData!.amsId != 0) {
-      setState(() => isLoading = true);
-      datasoff = await DBSQL.instance.fatchdataSQLNew();
-      Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-      datasoff = await DBSQL.instance.fatchdataSQLAll(modelData!.amsId!, psId!);
-
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future fatchFirstloadlora() async {
-    if (modelData!.gateWayId != 0) {
-      setState(() => isLoading = true);
-      // datas11 = await DBSQL.instance.fatchdataSQLNew();
-      Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-      datasoff =
-          await DBSQL.instance.fatchdataSQLAll(modelData!.gateWayId!, psId!);
-
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future fatchFirstloadRms() async {
-    if (modelData!.rmsId != 0) {
-      setState(() => isLoading = true);
-      // datas11 = await DBSQL.instance.fatchdataSQLNew();
-      Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-      datasoff = await DBSQL.instance.fatchdataSQLAll(modelData!.rmsId!, psId!);
-
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future fatchdataSQL() async {
-    setState(() => isLoading = true);
-    Listdata = await ListViewModel.instance.fatchdataPMSViewData();
-    datas = await DBSQL.instance.fatchdataSQLAll(deviceids, processId!);
-    //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-    setState(() => isLoading = false);
-  }
-
-  //send adata
-  Future fatchdataSend() async {
-    setState(() => isLoading = true);
-    Listdata = await ListViewModel.instance.fatchdataPMSViewData();
-    datas = await DBSQL.instance
-        .fatchdataSQL(deviceids, processId!, Listdata!.first.deviceType);
-    //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-    setState(() => isLoading = false);
   }
 
   Future getImage(ImageSource media, int index) async {
@@ -1206,56 +1141,6 @@ class _NodeDetailsState extends State<NodeDetails> {
     );
   }
 
-  Future<void> _showSaveConfirmationDialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('ARE YOU SURE TO SAVE'),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            ElevatedButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _showAlert_off(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showUploadConfirmationDialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('ARE YOU SURE TO UPLOAD'),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            ElevatedButton(
-              child: Text('OK'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                if (datasoff.isNotEmpty) {
-                  await insertCheckListDataWithSiteTeamEngineer_off(datasoff);
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   String approvedTitle() {
     if (selectedProcess!.toLowerCase().contains('dry comm')) {
       return approvedStatus == 3 ? 'Commented' : 'Approved';
@@ -1477,198 +1362,98 @@ class _NodeDetailsState extends State<NodeDetails> {
   Widget _buildChecklistItem(ECM_Checklist_Model item, int index) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
+      child: Column(
         children: [
-          if (item.isBullet != 1)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child:
-                  Text("$index .", textAlign: TextAlign.left, softWrap: true),
-            ),
-          if (item.isBullet == 1)
-            Row(
-              children: [
-                SizedBox(
-                  width: 25,
-                ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              if (item.isBullet != 1)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.circle, size: 8, color: Colors.black),
+                  child: Text("$index .",
+                      textAlign: TextAlign.left, softWrap: true),
                 ),
-              ],
-            ),
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(item.description!,
-                    textAlign: TextAlign.left, softWrap: true),
-                if (_isHindi)
-                  Text(
-                      "(${_originalDescriptions[_ChecklistModel!.indexOf(item)]})",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 12),
-                      softWrap: true),
-              ],
-            ),
-          ),
-          const SizedBox(width: 20),
-          if ((item.inputType == 'text' || item.inputType == 'float') &&
-              item.isBulletHeader != 1)
-            Expanded(
-              flex: 1,
-              child: TextFormField(
-                enabled: isEdit(),
-                initialValue: item.value,
-                decoration: InputDecoration(
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(width: 1, color: Colors.blue),
-                  ),
-                  suffixText:
-                      item.inputText?.isNotEmpty == true ? item.inputText : '',
+              if (item.isBullet == 1)
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 25,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.circle, size: 8, color: Colors.black),
+                    ),
+                  ],
                 ),
-                onChanged: (value) {
-                  setState(() {
-                    item.value = value;
-                  });
-                },
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(item.description!,
+                        textAlign: TextAlign.left, softWrap: true),
+                    if (_isHindi)
+                      Text(
+                          "(${_originalDescriptions[_ChecklistModel!.indexOf(item)]})",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 12),
+                          softWrap: true),
+                  ],
+                ),
               ),
-            ),
-          if (item.inputType == 'boolean')
-            Expanded(
-              flex: 0,
-              child: Checkbox(
-                activeColor: Colors.white54,
-                checkColor: Colors.green,
-                value: item.value == 'OK',
-                onChanged: isEdit()
-                    ? (value) {
-                        setState(() {
-                          item.value = value! ? 'OK' : '';
-                        });
-                      }
-                    : null,
-              ),
-            ),
-          // if (item.inputType == 'pdf')
-          if (item.inputType == 'pdf')
-            Expanded(
-              flex: 0,
-              child: IconButton(
-                icon: Image.asset(
-                  "assets/images/pdf.png",
-                  cacheHeight: 25,
-                ),
-                onPressed: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        icon: Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                        ),
-                        iconColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        content: SizedBox(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                height: 100,
-                                width: 100,
-                                child: IconButton(
-                                  // User can upload only PDF
-                                  onPressed: () async {
-                                    File? file = await getPdf(item);
-                                    if (file != null &&
-                                        file.path
-                                            .toLowerCase()
-                                            .endsWith('.pdf')) {
-                                      Navigator.pop(context);
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Please select a valid PDF file.')),
-                                      );
-                                    }
-                                  },
-                                  icon: Column(
-                                    children: [
-                                      Icon(Icons.upload),
-                                      Text('Upload PDF'),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (item.image != null && item.value == null)
-                                SizedBox(
-                                  height: 100,
-                                  width: 100,
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      await OpenFile.open(item.image?.path);
-                                    },
-                                    icon: Column(
-                                      children: [
-                                        Icon(Icons.document_scanner_rounded),
-                                        Text('View PDF'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              if (item.value != null)
-                                SizedBox(
-                                  height: 100,
-                                  width: 100,
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      await GetPDFbyPath(item.value ?? '');
-                                      base64ToPdf(
-                                          pdfString ?? '', getFilename());
-                                    },
-                                    icon: Column(
-                                      children: [
-                                        Icon(Icons.document_scanner_rounded),
-                                        Text('View PDF'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
+              const SizedBox(width: 20),
+              if ((item.inputType == 'text' || item.inputType == 'float') &&
+                  item.isBulletHeader != 1)
+                Expanded(
+                  flex: 1,
+                  child: TextFormField(
+                    enabled: isEdit(),
+                    initialValue: item.value,
+                    decoration: InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(width: 1, color: Colors.blue),
+                      ),
+                      suffixText: item.inputText?.isNotEmpty == true
+                          ? item.inputText
+                          : '',
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        item.value = value;
+                      });
                     },
-                  );
-                },
-              ),
-            ),
-
-          if (item.inputType == 'json')
-            Expanded(
-                flex: 0,
-                child: IconButton(
-                  icon: Image.asset(
-                    "assets/images/pdf.png",
-                    // height: 10,
-                    cacheHeight: 25,
                   ),
-                  onPressed: () async {
-                    await showDialog(
+                ),
+              if (item.inputType == 'boolean')
+                Expanded(
+                  flex: 0,
+                  child: Checkbox(
+                    activeColor: Colors.white54,
+                    checkColor: Colors.green,
+                    value: item.value == 'OK',
+                    onChanged: isEdit()
+                        ? (value) {
+                            setState(() {
+                              item.value = value! ? 'OK' : '';
+                            });
+                          }
+                        : null,
+                  ),
+                ),
+              // if (item.inputType == 'pdf')
+              if (item.inputType == 'pdf')
+                Expanded(
+                  flex: 0,
+                  child: IconButton(
+                    icon: Image.asset(
+                      "assets/images/pdf.png",
+                      cacheHeight: 25,
+                    ),
+                    onPressed: () async {
+                      await showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
@@ -1681,7 +1466,8 @@ class _NodeDetailsState extends State<NodeDetails> {
                             ),
                             iconColor: Colors.red,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                             content: SizedBox(
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -1692,15 +1478,27 @@ class _NodeDetailsState extends State<NodeDetails> {
                                     height: 100,
                                     width: 100,
                                     child: IconButton(
-                                      //if user click this button, user can upload image from gallery
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        getPdf(item);
+                                      // User can upload only PDF
+                                      onPressed: () async {
+                                        File? file = await getPdf(item);
+                                        if (file != null &&
+                                            file.path
+                                                .toLowerCase()
+                                                .endsWith('.pdf')) {
+                                          Navigator.pop(context);
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    'Please select a valid PDF file.')),
+                                          );
+                                        }
                                       },
                                       icon: Column(
                                         children: [
                                           Icon(Icons.upload),
-                                          Text('Upload JSON'),
+                                          Text('Upload PDF'),
                                         ],
                                       ),
                                     ),
@@ -1710,7 +1508,6 @@ class _NodeDetailsState extends State<NodeDetails> {
                                       height: 100,
                                       width: 100,
                                       child: IconButton(
-                                        //if user click this button. user can upload image from camera
                                         onPressed: () async {
                                           await OpenFile.open(item.image?.path);
                                         },
@@ -1728,7 +1525,6 @@ class _NodeDetailsState extends State<NodeDetails> {
                                       height: 100,
                                       width: 100,
                                       child: IconButton(
-                                        //if user click this button. user can upload image from camera
                                         onPressed: () async {
                                           await GetPDFbyPath(item.value ?? '');
                                           base64ToPdf(
@@ -1747,9 +1543,114 @@ class _NodeDetailsState extends State<NodeDetails> {
                               ),
                             ),
                           );
-                        });
-                  },
-                ))
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+              if (item.inputType == 'json')
+                Expanded(
+                    flex: 0,
+                    child: IconButton(
+                      icon: Image.asset(
+                        "assets/images/pdf.png",
+                        // height: 10,
+                        cacheHeight: 25,
+                      ),
+                      onPressed: () async {
+                        await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                icon: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: IconButton(
+                                    icon: Icon(Icons.close),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                  ),
+                                ),
+                                iconColor: Colors.red,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                content: SizedBox(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      SizedBox(
+                                        height: 100,
+                                        width: 100,
+                                        child: IconButton(
+                                          //if user click this button, user can upload image from gallery
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            getPdf(item);
+                                          },
+                                          icon: Column(
+                                            children: [
+                                              Icon(Icons.upload),
+                                              Text('Upload JSON'),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      if (item.image != null &&
+                                          item.value == null)
+                                        SizedBox(
+                                          height: 100,
+                                          width: 100,
+                                          child: IconButton(
+                                            //if user click this button. user can upload image from camera
+                                            onPressed: () async {
+                                              await OpenFile.open(
+                                                  item.image?.path);
+                                            },
+                                            icon: Column(
+                                              children: [
+                                                Icon(Icons
+                                                    .document_scanner_rounded),
+                                                Text('View PDF'),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      if (item.value != null)
+                                        SizedBox(
+                                          height: 100,
+                                          width: 100,
+                                          child: IconButton(
+                                            //if user click this button. user can upload image from camera
+                                            onPressed: () async {
+                                              await GetPDFbyPath(
+                                                  item.value ?? '');
+                                              base64ToPdf(pdfString ?? '',
+                                                  getFilename());
+                                            },
+                                            icon: Column(
+                                              children: [
+                                                Icon(Icons
+                                                    .document_scanner_rounded),
+                                                Text('View PDF'),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                    ))
+            ],
+          ),
+          Divider(
+            color: Colors.black,
+            height: 1,
+          )
         ],
       ),
     );
@@ -1796,10 +1697,10 @@ class _NodeDetailsState extends State<NodeDetails> {
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId'));
+          'http://ecmv2.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId');
+          'http://ecmv2.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId');
 
       if (res.statusCode == 200) {
         var json = jsonDecode(res.body);
@@ -1827,7 +1728,7 @@ class _NodeDetailsState extends State<NodeDetails> {
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId'));
+          'http://ecmv2.iotwater.in:3011/api/v1/project/users/0/$userid/$projectId'));
 
       if (res.statusCode == 200) {
         var json = jsonDecode(res.body);
@@ -1903,79 +1804,6 @@ class _NodeDetailsState extends State<NodeDetails> {
         } else {
           approveStatus = 2;
         }
-
-        int flagCounter = 0;
-        for (var subpro in subProcessName!) {
-          var list = _checkList
-              .where((element) =>
-                  element.subProcessName!.toLowerCase() == subpro.toLowerCase())
-              .toList();
-
-          respflag = await approveCheckListDataWithSiteTeamEngineer_func(
-              list, list.first.subProcessId!,
-              apporvedStatus: approveStatus);
-          if (respflag) {
-            flagCounter++;
-          }
-        }
-        if (flagCounter == subProcessName!.length) {
-          getECMData(selectedProcess!);
-          setState(() {
-            isSubmited = true;
-          });
-          flag = true;
-        } else
-          throw new Exception();
-      }
-    } catch (_, ex) {
-      flag = false;
-    }
-    return flag;
-  }
-
-  Future<bool> commentCheckListDataWithSiteTeamEngineer(
-      List<ECM_Checklist_Model> _checkList) async {
-    bool flag = false;
-
-    var respflag;
-    try {
-      if (_checkList != null) {
-        int approveStatus = 0;
-        int checkCount = _checkList
-            .where((e) =>
-                (e.value == null || e.value!.isEmpty) && e.inputType != "image")
-            .length;
-        int imageCount = _checkList
-            .where((e) =>
-                ((e.value == null || e.value!.isEmpty) || e.image != null) &&
-                e.inputType == "image")
-            .length;
-        if (!selectedProcess!.toLowerCase().contains('dry comm') ||
-            !selectedProcess!.toLowerCase().contains('wet comm')) {
-          approveStatus = 4;
-        } else {
-          approveStatus = 3;
-        }
-        /*bool isPartialProcess =
-            selectedProcess!.toLowerCase().contains("dry") ||
-                selectedProcess!.toLowerCase().contains('auto');
-        if (checkCount !=
-                _checkList.where((e) => e.inputText != "image").length ||
-            imageCount != 0) {
-          if (imageCount >= 3 && checkCount == 0)
-            approveStatus = isPartialProcess ? 1 : 2;
-          else if (!isPartialProcess) {
-            approveStatus = 1;
-          } else {
-            if (imageCount < 3) 
-            print("atleast 3 image must be uploaded");
-            if (checkCount != 0)
-            print("Partially done is not allow in this process");
-            return false;
-          }
-        } else {
-          return false;
-        }*/
 
         int flagCounter = 0;
         for (var subpro in subProcessName!) {
@@ -2084,6 +1912,79 @@ class _NodeDetailsState extends State<NodeDetails> {
     }
   }
 
+  Future<bool> commentCheckListDataWithSiteTeamEngineer(
+      List<ECM_Checklist_Model> _checkList) async {
+    bool flag = false;
+
+    var respflag;
+    try {
+      if (_checkList != null) {
+        int approveStatus = 0;
+        int checkCount = _checkList
+            .where((e) =>
+                (e.value == null || e.value!.isEmpty) && e.inputType != "image")
+            .length;
+        int imageCount = _checkList
+            .where((e) =>
+                ((e.value == null || e.value!.isEmpty) || e.image != null) &&
+                e.inputType == "image")
+            .length;
+        if (!selectedProcess!.toLowerCase().contains('dry comm') ||
+            !selectedProcess!.toLowerCase().contains('wet comm')) {
+          approveStatus = 4;
+        } else {
+          approveStatus = 3;
+        }
+        /*bool isPartialProcess =
+            selectedProcess!.toLowerCase().contains("dry") ||
+                selectedProcess!.toLowerCase().contains('auto');
+        if (checkCount !=
+                _checkList.where((e) => e.inputText != "image").length ||
+            imageCount != 0) {
+          if (imageCount >= 3 && checkCount == 0)
+            approveStatus = isPartialProcess ? 1 : 2;
+          else if (!isPartialProcess) {
+            approveStatus = 1;
+          } else {
+            if (imageCount < 3) 
+            print("atleast 3 image must be uploaded");
+            if (checkCount != 0)
+            print("Partially done is not allow in this process");
+            return false;
+          }
+        } else {
+          return false;
+        }*/
+
+        int flagCounter = 0;
+        for (var subpro in subProcessName!) {
+          var list = _checkList
+              .where((element) =>
+                  element.subProcessName!.toLowerCase() == subpro.toLowerCase())
+              .toList();
+
+          respflag = await approveCheckListDataWithSiteTeamEngineer_func(
+              list, list.first.subProcessId!,
+              apporvedStatus: approveStatus);
+          if (respflag) {
+            flagCounter++;
+          }
+        }
+        if (flagCounter == subProcessName!.length) {
+          getECMData(selectedProcess!);
+          setState(() {
+            isSubmited = true;
+          });
+          flag = true;
+        } else
+          throw new Exception();
+      }
+    } catch (_, ex) {
+      flag = false;
+    }
+    return flag;
+  }
+
   Future<bool> insertCheckListDataWithSiteTeamEngineer(
       List<ECM_Checklist_Model> checklist) async {
     bool isSuccess = false;
@@ -2189,112 +2090,6 @@ class _NodeDetailsState extends State<NodeDetails> {
 
     return isSuccess;
   }
-
-/*
-  Future<bool> insertCheckListDataWithSiteTeamEngineer(
-      List<ECM_Checklist_Model> _checkList) async {
-    bool flag = false;
-    var respflag;
-    try {
-      if (_checkList != null) {
-        int approveStatus = 0;
-        int checkCount = _checkList
-            .where((e) =>
-                (e.value == null || e.value!.isEmpty) &&
-                e.inputType != "image" &&
-                e.inputType != "pdf" &&
-                e.inputType != "")
-            .length;
-        int imageCount = _checkList
-            .where((e) =>
-                ((e.value == null || e.value!.isEmpty) ||
-                        e.imageByteArray != null) &&
-                    e.inputType == "image" ||
-                e.inputType == 'pdf')
-            .length;
-
-        bool isPartialProcess =
-            selectedProcess!.toLowerCase().contains("dry") ||
-                selectedProcess!.toLowerCase().contains('auto') ||
-                selectedProcess!.toLowerCase().contains('wet');
-
-        var _imglistdataWithoutNullValue = imageList!
-            .where((item) =>
-                (item.inputType!.contains("image") ||
-                    item.inputType!.contains("pdf")) &&
-                item.imageByteArray != null)
-            .toList();
-
-        // Skip image check if isPartialProcess is true
-        if (!isPartialProcess) {
-          if (checkCount !=
-                  _checkList
-                      .where(
-                          (e) => e.inputText != "image" && e.inputType != "pdf")
-                      .length ||
-              imageCount != 0) {
-            if (checkCount == 0 && _imglistdataWithoutNullValue.length < 3) {
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Message"),
-                    content: Text("Minimum 3 Images are required to proceed"),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text("OK"),
-                      ),
-                    ],
-                  );
-                },
-              );
-              return false;
-            } else if (imageCount >= 3 && checkCount == 0) {
-              approveStatus = 2;
-            } else {
-              approveStatus = 1;
-            }
-          } else {
-            return false;
-          }
-        } else {
-          approveStatus =
-              1; // For "auto" or "dry" processes, approval is allowed without 3 images
-        }
-
-        int flagCounter = 0;
-        for (var subpro in subProcessName!) {
-          var list = _checkList
-              .where((element) =>
-                  element.subProcessName!.toLowerCase() == subpro.toLowerCase())
-              .toList();
-          respflag = await insertCheckListDataWithSiteTeamEngineer_func(
-              list, list.first.subProcessId!,
-              apporvedStatus: approveStatus);
-          if (respflag) {
-            flagCounter++;
-          }
-        }
-        if (flagCounter == subProcessName!.length) {
-          getECMData(selectedProcess!);
-          setState(() {
-            isSubmited = true;
-            Source = widget.Source;
-          });
-          flag = true;
-        } else {
-          throw new Exception();
-        }
-      }
-    } catch (_, ex) {
-      flag = false;
-    }
-    return flag;
-  }
-*/
 
   Future<bool> insertCheckListDataWithSiteTeamEngineer_func(
       List<ECM_Checklist_Model> imageList, int subprocessId,
@@ -2415,6 +2210,112 @@ class _NodeDetailsState extends State<NodeDetails> {
       return false;
     }
   }
+
+/*
+  Future<bool> insertCheckListDataWithSiteTeamEngineer(
+      List<ECM_Checklist_Model> _checkList) async {
+    bool flag = false;
+    var respflag;
+    try {
+      if (_checkList != null) {
+        int approveStatus = 0;
+        int checkCount = _checkList
+            .where((e) =>
+                (e.value == null || e.value!.isEmpty) &&
+                e.inputType != "image" &&
+                e.inputType != "pdf" &&
+                e.inputType != "")
+            .length;
+        int imageCount = _checkList
+            .where((e) =>
+                ((e.value == null || e.value!.isEmpty) ||
+                        e.imageByteArray != null) &&
+                    e.inputType == "image" ||
+                e.inputType == 'pdf')
+            .length;
+
+        bool isPartialProcess =
+            selectedProcess!.toLowerCase().contains("dry") ||
+                selectedProcess!.toLowerCase().contains('auto') ||
+                selectedProcess!.toLowerCase().contains('wet');
+
+        var _imglistdataWithoutNullValue = imageList!
+            .where((item) =>
+                (item.inputType!.contains("image") ||
+                    item.inputType!.contains("pdf")) &&
+                item.imageByteArray != null)
+            .toList();
+
+        // Skip image check if isPartialProcess is true
+        if (!isPartialProcess) {
+          if (checkCount !=
+                  _checkList
+                      .where(
+                          (e) => e.inputText != "image" && e.inputType != "pdf")
+                      .length ||
+              imageCount != 0) {
+            if (checkCount == 0 && _imglistdataWithoutNullValue.length < 3) {
+              await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Message"),
+                    content: Text("Minimum 3 Images are required to proceed"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("OK"),
+                      ),
+                    ],
+                  );
+                },
+              );
+              return false;
+            } else if (imageCount >= 3 && checkCount == 0) {
+              approveStatus = 2;
+            } else {
+              approveStatus = 1;
+            }
+          } else {
+            return false;
+          }
+        } else {
+          approveStatus =
+              1; // For "auto" or "dry" processes, approval is allowed without 3 images
+        }
+
+        int flagCounter = 0;
+        for (var subpro in subProcessName!) {
+          var list = _checkList
+              .where((element) =>
+                  element.subProcessName!.toLowerCase() == subpro.toLowerCase())
+              .toList();
+          respflag = await insertCheckListDataWithSiteTeamEngineer_func(
+              list, list.first.subProcessId!,
+              apporvedStatus: approveStatus);
+          if (respflag) {
+            flagCounter++;
+          }
+        }
+        if (flagCounter == subProcessName!.length) {
+          getECMData(selectedProcess!);
+          setState(() {
+            isSubmited = true;
+            Source = widget.Source;
+          });
+          flag = true;
+        } else {
+          throw new Exception();
+        }
+      }
+    } catch (_, ex) {
+      flag = false;
+    }
+    return flag;
+  }
+*/
 
   // offline data send to server
   Future<bool> insertCheckListDataWithSiteTeamEngineer_off(
@@ -2543,8 +2444,7 @@ class _NodeDetailsState extends State<NodeDetails> {
           });
 
           await listdatacheckup();
-          await DBSQL.instance.deleteCheckListData(
-              datasoff.first.deviceId!, datasoff.first.processId!);
+          await DBSQL.instance.deleteChecklist(datasoff.first);
           await getECMData(selectedProcess!);
           setState(() {
             isSubmited = true;
@@ -2779,21 +2679,6 @@ class _NodeDetailsState extends State<NodeDetails> {
     }
   }
 
-  Future listdatacheckup() async {
-    if (modelData!.omsId != 0) {
-      await ListViewModel.instance.deleteListDataoms(modelData!.omsId!);
-    }
-    if (modelData!.amsId != 0) {
-      await ListViewModel.instance.deleteListDataams(modelData!.amsId!);
-    }
-    if (modelData!.rmsId != 0) {
-      await ListViewModel.instance.deleteListDatarms(modelData!.rmsId!);
-    }
-    if (modelData!.gateWayId != 0) {
-      await ListViewModel.instance.deleteListDatagetway(modelData!.gateWayId!);
-    }
-  }
-
   Future btnSubmit_Clicked() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -2992,10 +2877,146 @@ class _NodeDetailsState extends State<NodeDetails> {
     }
   }
 
-  //off data save func
-  void _showAlert_off(BuildContext context) async {
-    // String? remark; // to store the value of Remark field
-    // String? siteTeamMembers; // to store the value of Site Team Members field
+  Future<void> _showSaveConfirmationDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('ARE YOU SURE TO SAVE'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _showAlertOff(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showUploadConfirmationDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('ARE YOU SURE TO UPLOAD'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              child: Text('OK'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                if (datasoff.isNotEmpty) {
+                  await insertCheckListDataWithSiteTeamEngineer_off(datasoff);
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAlertOff(BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? conString = preferences.getString('ConString');
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Submit'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _remarkoffController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Remark*',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter Remark';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: _siteEngineerTeamOffController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Site Team Members',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              onPressed: () async {
+                if (_remarkoffController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Remark is required!')),
+                  );
+                  return;
+                }
+
+                // Update all checklist models
+                for (final checklist in _ChecklistModel ?? []) {
+                  checklist
+                    ..remark = _remarkoffController.text.trim()
+                    ..deviceId = deviceids
+                    ..source = widget.Source
+                    ..conString = conString
+                    ..approvalRemark = approvedremark
+                    ..image = image
+                    ..workedBy = preferences.getInt('ProUserId')
+                    ..approvedOn = approvedon
+                    ..siteTeamEngineer =
+                        _siteEngineerTeamOffController.text.trim()
+                    ..issaved = "Save Offline Data!"
+                    ..approvedBy = approvedId
+                    ..tempDT = DateFormat('yyyy-MM-dd HH:mm:ss')
+                        .format(DateTime.now());
+                }
+
+                Addchecklist = _ChecklistModel;
+
+                Navigator.of(context).pop(); // Close dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Saved Successfully')),
+                );
+
+                // Perform async operations
+                await fatchdata11();
+                await addList();
+                await fatchdataSQL();
+                await addNew();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /*void _showAlert_off(BuildContext context) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? conString = preferences.getString('ConString');
     await showDialog(
@@ -3014,20 +3035,17 @@ class _NodeDetailsState extends State<NodeDetails> {
                 onChanged: (value) {
                   _remarkController = value;
                 },
-                // validator: (value) {
-                //   if (value == '') {
-                //     return 'Please enter Remark'; // Validation for Remark field
-                //   }
-                //   return null;
-                // },
+                validator: (value) {
+                  if (value == '') {
+                    return 'Please enter Remark'; // Validation for Remark field
+                  }
+                  return null;
+                },
               ),
-
               SizedBox(height: 16.0),
-              // if (conString!.contains('ID=dba'))
               TextFormField(
                 decoration: InputDecoration(
-                  hintText:
-                      'Enter Site Team Members', // Placeholder text for Site Team Members field
+                  hintText: 'Enter Site Team Members',
                 ),
                 onChanged: (value) {
                   _siteEngineerTeamController = value;
@@ -3084,42 +3102,105 @@ class _NodeDetailsState extends State<NodeDetails> {
     await fatchdataSQL();
     await addNew();
   }
+*/
+
+  Future fatchFirstloadoms() async {
+    if (modelData!.omsId != 0) {
+      setState(() => isLoading = true);
+      Listdata = await ListViewModel.instance
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
+      datasoff = await DBSQL.instance.fetchByProcess(modelData!.omsId!, psId!);
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future fatchFirstloadams() async {
+    if (modelData!.amsId != 0) {
+      setState(() => isLoading = true);
+      datasoff = await DBSQL.instance.fetchData();
+      Listdata = await ListViewModel.instance
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
+      datasoff = await DBSQL.instance.fetchByProcess(modelData!.amsId!, psId!);
+
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future fatchFirstloadlora() async {
+    if (modelData!.gateWayId != 0) {
+      setState(() => isLoading = true);
+      // datas11 = await DBSQL.instance.fatchdataSQLNew();
+      Listdata = await ListViewModel.instance
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
+      datasoff =
+          await DBSQL.instance.fetchByProcess(modelData!.gateWayId!, psId!);
+
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future fatchFirstloadRms() async {
+    if (modelData!.rmsId != 0) {
+      setState(() => isLoading = true);
+      // datas11 = await DBSQL.instance.fatchdataSQLNew();
+      Listdata = await ListViewModel.instance
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
+      datasoff = await DBSQL.instance.fetchByProcess(modelData!.rmsId!, psId!);
+
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future fatchdataSQL() async {
+    setState(() => isLoading = true);
+    Listdata = await ListViewModel.instance.fetchData();
+    datas = await DBSQL.instance.fetchByProcess(deviceids, processId!);
+    //  listdistinctProcesss = await ListModel.instance.fetchAll();
+    setState(() => isLoading = false);
+  }
+
+  //send adata
+  Future fatchdataSend() async {
+    setState(() => isLoading = true);
+    Listdata = await ListViewModel.instance.fetchData();
+    datas = await DBSQL.instance
+        .fetchByType(deviceids, processId!, Listdata!.first.deviceType);
+    //  listdistinctProcesss = await ListModel.instance.fetchAll();
+    setState(() => isLoading = false);
+  }
 
   Future fatchdata11() async {
     if (widget.listdatas == modelData!.omsId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11oms(widget.listdatas!);
-      // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByOmsId(widget.listdatas!);
+
       setState(() => isLoading = false);
     }
     if (widget.listdatas == modelData!.amsId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11Ams(widget.listdatas!);
-      // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByAmsId(widget.listdatas!);
+
       setState(() => isLoading = false);
     }
     if (widget.listdatas == modelData!.rmsId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11rms(widget.listdatas!);
-      // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByRmsId(widget.listdatas!);
+
       setState(() => isLoading = false);
     }
     if (widget.listdatas == modelData!.gateWayId) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata = await ListViewModel.instance
-          .fatchdataPMSView11getway(widget.listdatas!);
-      // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata =
+          await ListViewModel.instance.fetchByGatewayId(widget.listdatas!);
+
       setState(() => isLoading = false);
     }
   }
@@ -3133,7 +3214,7 @@ class _NodeDetailsState extends State<NodeDetails> {
     }
     for (int i = 0; i <= Addchecklist!.length; i++) {
       final data = Addchecklist![i];
-      DBSQL.instance.SQLUpdatedata(data);
+      DBSQL.instance.updateChecklist(data);
     }
   }
 
@@ -3147,7 +3228,22 @@ class _NodeDetailsState extends State<NodeDetails> {
       modelData!.projectName = widget.ProjectName;
       modelData!.deviceType = widget.Source;
       final data = modelData!;
-      ListViewModel.instance.NewUpdatedata(data);
+      ListViewModel.instance.update(data);
+    }
+  }
+
+  Future listdatacheckup() async {
+    if (modelData!.omsId != 0) {
+      await ListViewModel.instance.deleteOms(modelData!.omsId!);
+    }
+    if (modelData!.amsId != 0) {
+      await ListViewModel.instance.deleteAms(modelData!.amsId!);
+    }
+    if (modelData!.rmsId != 0) {
+      await ListViewModel.instance.deleteRms(modelData!.rmsId!);
+    }
+    if (modelData!.gateWayId != 0) {
+      await ListViewModel.instance.deleteGateway(modelData!.gateWayId!);
     }
   }
 }

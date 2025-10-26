@@ -488,10 +488,10 @@ class _Rms_informationState extends State<Rms_information> {
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/RMS/info'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/RMS/info'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/RMS/info');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/RMS/info');
 
       var json = jsonDecode(res.body);
       List<InformationMasterModel> fetchedData = <InformationMasterModel>[];

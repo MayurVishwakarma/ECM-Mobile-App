@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, file_names, prefer_const_literals_to_create_immutables, sort_child_properties_last, import_of_legacy_library_into_null_safe, use_key_in_widget_constructors, library_private_types_in_public_api, unused_import, unused_element, prefer_interpolation_to_compose_strings, avoid_print, prefer_is_empty, unnecessary_null_comparison, must_be_immutable, non_constant_identifier_names, unused_field, prefer_typing_uninitialized_variables, unused_local_variable, unused_catch_stack, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, deprecated_member_use
 // import 'package:custom_switch/custom_switch.dart';
 import 'dart:convert';
+import 'package:ecm_application/Model/Common/ProcessMasterModel.dart';
 import 'package:ecm_application/Model/Project/ECMTool/PMSChackListModel.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/ECMToolScreen.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/NodeDetails_new.dart';
@@ -87,8 +88,8 @@ class _RmsPageState extends State<RmsPage> with SingleTickerProviderStateMixin {
   List<PMSListViewModel> listview = [];
 
   Future ListcolorChanger() async {
-    listview = await ListViewModel.instance
-        .fatchcommonlist(widget.Source!.toLowerCase(), widget.ProjectName!);
+    listview = await ListViewModel.instance.fetchByProjectAndDevice(
+        widget.Source!.toLowerCase(), widget.ProjectName!);
     // datas = await DBSQL.instance.fatchdataSQL(deviceids);
   }
 

@@ -1,3 +1,5 @@
+import 'package:flutter/src/widgets/basic.dart';
+
 class PMSChaklistModel {
   int? checkListId;
   int? subProcessId;
@@ -143,4 +145,6 @@ class PMSChaklistModel {
     data['SiteTeamEngineer'] = this.siteTeamEngineer;
     return data;
   }
+
+  map(Padding Function(dynamic process) param0) {}
 }

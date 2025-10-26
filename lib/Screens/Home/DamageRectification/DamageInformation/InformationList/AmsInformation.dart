@@ -531,10 +531,10 @@ class _Ams_informationState extends State<Ams_information> {
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/info'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/info'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/info');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/info');
 
       var json = jsonDecode(res.body);
       List<InformationMasterModel> fetchedData = <InformationMasterModel>[];

@@ -1253,7 +1253,7 @@ class _RoutineManual_CheckListState extends State<RoutineManual_CheckList> {
     return widget;
   }
 
-  Widget getSignalDetails(String details) {
+  /*Widget getSignalDetails(String details) {
     try {
       List<dynamic> signalDetails = ['', '', '', '', '', ''];
       signalDetails = details.split(' ');
@@ -1294,7 +1294,7 @@ class _RoutineManual_CheckListState extends State<RoutineManual_CheckList> {
       );
     }
   }
-
+*/
   getWorkedByNAme(String userid) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -1326,7 +1326,6 @@ class _RoutineManual_CheckListState extends State<RoutineManual_CheckList> {
       return '';
     }
   }
-
 
   getUserType() async {
     try {
@@ -1428,7 +1427,7 @@ class _RoutineManual_CheckListState extends State<RoutineManual_CheckList> {
   Future<int> insertRoutineCheckListData(
       List<RoutineCheckListModel> _checkList, String _remark) async {
     bool flag = false;
-    int _routineStatus = 0;
+    // int _routineStatus = 0;
     try {
       var _list = _checkList
           .where((item) =>

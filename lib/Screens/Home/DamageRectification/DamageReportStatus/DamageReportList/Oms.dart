@@ -877,10 +877,10 @@ class _Oms_ReportListState extends State<Oms_ReportList> {
       final projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/OMS/$area/$distibutory'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/OMS/$area/$distibutory'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/OMS/$area/$distibutory');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/damageSummaryCount/$projectId/OMS/$area/$distibutory');
 
       var json = jsonDecode(res.body);
       List<DamageReport> fetchedData = <DamageReport>[];

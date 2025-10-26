@@ -689,9 +689,9 @@ class _SelectedOmsDamageInformationScreenState
 
       String? projectId = preferences.getString('ProjectId');
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryList/$projectId/$area/$distibutory/$Source/$ListStatus/info'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryList/$projectId/$area/$distibutory/$Source/$ListStatus/info'));
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryList/$projectId/$area/$distibutory/$Source/$ListStatus/info');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryList/$projectId/$area/$distibutory/$Source/$ListStatus/info');
 
       var json = jsonDecode(res.body);
       List<SelectedInformationModel> fetchedData = <SelectedInformationModel>[];

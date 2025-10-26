@@ -765,10 +765,10 @@ class _SelectedOmsDamageMatrialScreenState
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryList?search=$_search&areaId=$area&distributoryId=$distibutory&deviceType=$Source&isFilter=$ListStatus&projectId=$projectId'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryList?search=$_search&areaId=$area&distributoryId=$distibutory&deviceType=$Source&isFilter=$ListStatus&projectId=$projectId'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryList?search=$_search&areaId=$area&distributoryId=$distibutory&deviceType=$Source&isFilter=$ListStatus&projectId=$projectId');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryList?search=$_search&areaId=$area&distributoryId=$distibutory&deviceType=$Source&isFilter=$ListStatus&projectId=$projectId');
 
       var json = jsonDecode(res.body);
       List<SelectedMaterialDamageModel> fetchedData =

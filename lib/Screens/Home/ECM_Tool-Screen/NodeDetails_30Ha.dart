@@ -108,9 +108,9 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
       setState(() => isLoading = true);
       // datas11 = await DBSQL.instance.fatchdataSQLNew();
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-      datasoff = await DBSQL.instance.fatchdataSQLAll(modelData!.omsId!, psId!);
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
+      datasoff = await DBSQL.instance.fetchByProcess(modelData!.omsId!, psId!);
       setState(() => isLoading = false);
     }
   }
@@ -118,11 +118,11 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
   Future fatchFirstloadams() async {
     if (modelData!.amsId != 0) {
       setState(() => isLoading = true);
-      datasoff = await DBSQL.instance.fatchdataSQLNew();
+      datasoff = await DBSQL.instance.fetchAll();
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-      datasoff = await DBSQL.instance.fatchdataSQLAll(modelData!.amsId!, psId!);
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
+      datasoff = await DBSQL.instance.fetchByProcess(modelData!.amsId!, psId!);
 
       setState(() => isLoading = false);
     }
@@ -133,10 +133,10 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
       setState(() => isLoading = true);
       // datas11 = await DBSQL.instance.fatchdataSQLNew();
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
       datasoff =
-          await DBSQL.instance.fatchdataSQLAll(modelData!.gateWayId!, psId!);
+          await DBSQL.instance.fetchByProcess(modelData!.gateWayId!, psId!);
 
       setState(() => isLoading = false);
     }
@@ -147,9 +147,9 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
       setState(() => isLoading = true);
       // datas11 = await DBSQL.instance.fatchdataSQLNew();
       Listdata = await ListViewModel.instance
-          .fatchdataPMSViewList(widget.ProjectName!, widget.Source!);
-      listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
-      datasoff = await DBSQL.instance.fatchdataSQLAll(modelData!.rmsId!, psId!);
+          .fetchByProjectAndDevice(widget.ProjectName!, widget.Source!);
+      listdistinctProcesss = await ListModel.instance.fetchAll();
+      datasoff = await DBSQL.instance.fetchByProcess(modelData!.rmsId!, psId!);
 
       setState(() => isLoading = false);
     }
@@ -163,19 +163,19 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
   bool isLoading = false;
   Future fatchdataSQL() async {
     setState(() => isLoading = true);
-    Listdata = await ListViewModel.instance.fatchdataPMSViewData();
-    datas = await DBSQL.instance.fatchdataSQLAll(deviceids, processId!);
-    //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+    Listdata = await ListViewModel.instance.fetchData();
+    datas = await DBSQL.instance.fetchByProcess(deviceids, processId!);
+    //  listdistinctProcesss = await ListModel.instance.fetchAll();
     setState(() => isLoading = false);
   }
 
   //send adata
   Future fatchdataSend() async {
     setState(() => isLoading = true);
-    Listdata = await ListViewModel.instance.fatchdataPMSViewData();
+    Listdata = await ListViewModel.instance.fetchData();
     datas = await DBSQL.instance
-        .fatchdataSQL(deviceids, processId!, Listdata!.first.deviceType);
-    //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+        .fetchByType(deviceids, processId!, Listdata!.first.deviceType);
+    //  listdistinctProcesss = await ListModel.instance.fetchAll();
     setState(() => isLoading = false);
   }
 
@@ -826,45 +826,36 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
     }
     for (int i = 0; i <= Addchecklist!.length; i++) {
       final data = Addchecklist![i];
-      DBSQL.instance.SQLUpdatedata(data);
+      DBSQL.instance.updateChecklist(data);
     }
   }
 
   Future fatchdata11() async {
     if (modelData!.omsId != 0) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11oms(modelData!.omsId!);
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByOmsId(modelData!.omsId!);
       // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      //  listdistinctProcesss = await ListModel.instance.fetchAll();
       setState(() => isLoading = false);
     }
     if (modelData!.amsId != 0) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11oms(modelData!.omsId!);
-      // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      alllistItem = await ListViewModel.instance.fetchAll();
+      Listdata = await ListViewModel.instance.fetchByAmsId(modelData!.amsId!);
       setState(() => isLoading = false);
     }
     if (modelData!.rmsId != 0) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata =
-          await ListViewModel.instance.fatchdataPMSView11Ams(modelData!.amsId!);
-      // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata = await ListViewModel.instance.fetchByRmsId(modelData!.rmsId!);
       setState(() => isLoading = false);
     }
     if (modelData!.gateWayId != 0) {
       setState(() => isLoading = true);
-      alllistItem = await ListViewModel.instance.fatchdataPMSViewData();
-      Listdata = await ListViewModel.instance
-          .fatchdataPMSView11getway(modelData!.gateWayId!);
-      // datas = await DBSQL.instance.fatchdataSQL(deviceids, processId!);
-      //  listdistinctProcesss = await ListModel.instance.fatchdataPMSListData();
+      alllistItem = await ListViewModel.instance.fetchData();
+      Listdata =
+          await ListViewModel.instance.fetchByGatewayId(modelData!.gateWayId!);
       setState(() => isLoading = false);
     }
   }
@@ -879,7 +870,7 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
       modelData!.projectName = widget.ProjectName;
       modelData!.deviceType = widget.Source;
       final data = modelData!;
-      ListViewModel.instance.NewUpdatedata(data);
+      ListViewModel.instance.update(data);
     }
   }
 
@@ -2099,8 +2090,6 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
     }
   }
 
-
-
   getUserType() async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -2969,8 +2958,7 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
           await listdatacheckup();
-          await DBSQL.instance.deleteCheckListData(
-              datasoff.first.deviceId!, datasoff.first.processId!);
+          await DBSQL.instance.deleteChecklist(datasoff.first);
           getECMData(selectedProcess!);
           setState(() {
             isSubmited = true;
@@ -2987,15 +2975,15 @@ class _NodeDetails30HaState extends State<NodeDetails30Ha> {
 
   Future listdatacheckup() async {
     if (modelData!.omsId != 0) {}
-    await ListViewModel.instance.deleteListDataoms(modelData!.omsId!);
+    await ListViewModel.instance.deleteOms(modelData!.omsId!);
     if (modelData!.amsId != 0) {
-      await ListViewModel.instance.deleteListDataams(modelData!.amsId!);
+      await ListViewModel.instance.deleteAms(modelData!.amsId!);
     }
     if (modelData!.rmsId != 0) {
-      await ListViewModel.instance.deleteListDatarms(modelData!.rmsId!);
+      await ListViewModel.instance.deleteRms(modelData!.rmsId!);
     }
     if (modelData!.gateWayId != 0) {
-      await ListViewModel.instance.deleteListDatagetway(modelData!.gateWayId!);
+      await ListViewModel.instance.deleteGateway(modelData!.gateWayId!);
     }
   }
 

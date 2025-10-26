@@ -7,6 +7,7 @@ import 'package:ecm_application/Model/Project/RoutineCheck/RoutineCheckListModel
 import 'package:ecm_application/Model/Project/RoutineCheck/RoutineCheckModel.dart';
 import 'package:ecm_application/Model/Project/RoutineCheck/RoutineScountModel.dart';
 import 'package:ecm_application/Model/Project/RoutineCheck/RoutineTimeModel.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final dio = Dio();
@@ -27,13 +28,14 @@ Future<List<RoutineCheckMasterModel>> getRoutineNodeList({
     final prefs = await SharedPreferences.getInstance();
     final projectId = prefs.getString('ProjectId');
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/routine/routineNodeList?search=$search&areaId=$areaId&distributoryId=$distibutoryId&routineStatus=$routineStatus&dateSort=$dateSort&StartDate=1900-01-01&EndDate=1900-01-01&NextSchedule=$nextSchedule&deviceType=$source&index=$index&limit=$limit&projectId=$projectId';
+        'http://ecmv2.iotwater.in:3011/api/v1/routine/routineNodeList?search=$search&areaId=$areaId&distributoryId=$distibutoryId&routineStatus=$routineStatus&dateSort=$dateSort&StartDate=1900-01-01&EndDate=1900-01-01&NextSchedule=$nextSchedule&deviceType=$source&index=$index&limit=$limit&projectId=$projectId';
     final response = await dio.request(
       url,
       options: Options(
         method: 'GET',
       ),
     );
+    debugPrint(url);
 
     if (response.statusCode == 200) {
       List<RoutineCheckMasterModel> result = [];
@@ -62,7 +64,7 @@ Future<String?> uploadRoutineImage(
     });
 
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/routine_images/$projectId/$deviceType/$deviceId';
+        'http://ecmv2.iotwater.in:3011/api/v1/routine_images/$projectId/$deviceType/$deviceId';
 
     final response = await dio.post(url, data: formData);
 
@@ -98,7 +100,7 @@ Future<List<RoutineCheckListModel>> getRoutineCheckList(
     ));
 
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/routine/routineReport/$projectId/$deviceId';
+        'http://ecmv2.iotwater.in:3011/api/v1/routine/routineReport/$projectId/$deviceId';
 
     print("URL: $url");
 
@@ -131,7 +133,7 @@ Future<List<RoutineCheckListModel>> getRoutineCheckList(
 Future<bool> uploadRoutineReport(dynamic payload) async {
   try {
     var response = await dio.request(
-      'http://ecmtest.iotwater.in:3011/api/v1/routine/savereoutinereport',
+      'http://ecmv2.iotwater.in:3011/api/v1/routine/savereoutinereport',
       options: Options(
         method: 'POST',
         headers: headers,
@@ -161,7 +163,7 @@ Future<bool> updateRoutineTime(int days) async {
     final prefs = await SharedPreferences.getInstance();
     final projectId = prefs.getString('ProjectId');
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/routine/routineTime?routineTime=$days&projectId=$projectId';
+        'http://ecmv2.iotwater.in:3011/api/v1/routine/routineTime?routineTime=$days&projectId=$projectId';
     final response = await dio.request(
       url,
       options: Options(
@@ -189,7 +191,7 @@ Future<int> getRoutineTime() async {
 
     final Dio dio = Dio();
     final String url =
-        'http://ecmtest.iotwater.in:3011/api/v1/routine/routineTime?projectId=$projectId';
+        'http://ecmv2.iotwater.in:3011/api/v1/routine/routineTime?projectId=$projectId';
 
     final response = await dio.get(url);
 
@@ -226,7 +228,7 @@ Future<RoutineScountModel> getRoutineCheckStatusCount({
     final prefs = await SharedPreferences.getInstance();
     final projectId = prefs.getString('ProjectId');
     final url =
-        'http://ecmtest.iotwater.in:3011/api/v1/routine/routinestatuscount?search=$search&areaId=$areaId&distributoryId=$distibutoryId&routineStatus=$routineStatus&StartDate=1900-01-01&EndDate=1900-01-01&NextSchedule=$nextSchedule&deviceType=$source&projectId=$projectId';
+        'http://ecmv2.iotwater.in:3011/api/v1/routine/routinestatuscount?search=$search&areaId=$areaId&distributoryId=$distibutoryId&routineStatus=$routineStatus&StartDate=1900-01-01&EndDate=1900-01-01&NextSchedule=$nextSchedule&deviceType=$source&projectId=$projectId';
     final response = await dio.request(
       url,
       options: Options(

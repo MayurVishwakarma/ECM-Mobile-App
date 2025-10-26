@@ -1,11 +1,13 @@
 // ignore_for_file: must_call_super, non_constant_identifier_names, must_be_immutable, unused_local_variable, avoid_types_as_parameter_names, prefer_is_empty, prefer_const_constructors, use_key_in_widget_constructors, empty_catches
 
 import 'dart:async';
+import 'package:ecm_application/Provider/InternetProvider.dart';
 import 'package:ecm_application/Screens/Login/Dashboard.dart';
 import 'package:ecm_application/Screens/Login/LoginScreen.dart';
 import 'package:ecm_application/Screens/Login/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -73,19 +75,24 @@ class _MyAppState extends State<MyApp> {
       showFirstScreen =
           mobileno.length > 0 ? ProjectsCategoryScreen() : LoginScreen();
     });
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        buttonTheme: ButtonThemeData(splashColor: Colors.white),
-        appBarTheme: AppBarTheme(
-            backgroundColor: Colors.blue, foregroundColor: Colors.white),
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            primary: Colors.blue,
-            secondary: Colors.blue),
-        useMaterial3: true,
+    return MultiProvider(
+      providers:[
+        ChangeNotifierProvider(create: (context) => InternetProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          buttonTheme: ButtonThemeData(splashColor: Colors.white),
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.blue, foregroundColor: Colors.white),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              primary: Colors.blue,
+              secondary: Colors.blue),
+          useMaterial3: true,
+        ),
+        home: isFirstLoad ? SplashScreen() : showFirstScreen,
       ),
-      home: isFirstLoad ? SplashScreen() : showFirstScreen,
     );
   }
 }

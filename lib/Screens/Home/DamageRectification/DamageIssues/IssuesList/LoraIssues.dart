@@ -539,10 +539,10 @@ class _Lora_issuesState extends State<Lora_issues> {
 
       String? projectId = preferences.getString('ProjectId');
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/LORA/issue'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/LORA/issue'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/LORA/issue');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/LORA/issue');
 
       var json = jsonDecode(res.body);
       List<InformationMasterModel> fetchedData = <InformationMasterModel>[];

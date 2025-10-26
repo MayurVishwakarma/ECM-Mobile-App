@@ -534,9 +534,9 @@ class _Ams_issuesState extends State<Ams_issues> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? projectId = preferences.getString('ProjectId');
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/issue'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/issue'));
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/issues');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/informationSummaryCount/$projectId/$area/$distibutory/AMS/issues');
 
       var json = jsonDecode(res.body);
       List<InformationMasterModel> fetchedData = <InformationMasterModel>[];

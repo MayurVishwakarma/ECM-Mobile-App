@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, file_names, prefer_const_literals_to_create_immutables, sort_child_properties_last, import_of_legacy_library_into_null_safe, use_key_in_widget_constructors, library_private_types_in_public_api, unused_import, unused_element, prefer_interpolation_to_compose_strings, avoid_print, prefer_is_empty, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_final_fields, unnecessary_new, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, unused_local_variable, unused_catch_stack, must_be_immutable, prefer_typing_uninitialized_variables, prefer_collection_literals, unrelated_type_equality_checks, avoid_unnecessary_containers
 // import 'package:custom_switch/custom_switch.dart';
 import 'dart:convert';
+import 'package:ecm_application/Model/Common/ProcessMasterModel.dart';
 import 'package:ecm_application/Model/Project/ECMTool/PMSChackListModel.dart';
-import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/ECMToolScreen.dart';
 import 'package:ecm_application/Screens/Home/ECM_Tool-Screen/NodeDetails_30Ha.dart';
 import 'package:http/http.dart' as http;
 import 'package:ecm_application/Model/Project/Login/AreaModel.dart';
@@ -79,8 +79,8 @@ class _Oms30haPageState extends State<Oms30haPage> {
   List<PMSListViewModel> listview = [];
 
   Future ListcolorChanger() async {
-    listview = await ListViewModel.instance
-        .fatchcommonlist(widget.Source!.toLowerCase(), widget.ProjectName!);
+    listview = await ListViewModel.instance.fetchByProjectAndDevice(
+        widget.Source!.toLowerCase(), widget.ProjectName!);
   }
 
   getDropDownAsync() async {

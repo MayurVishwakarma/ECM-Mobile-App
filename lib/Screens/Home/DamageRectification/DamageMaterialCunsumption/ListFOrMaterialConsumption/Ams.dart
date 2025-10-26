@@ -1153,10 +1153,10 @@ class _Ams_MaterialConsumptionState extends State<Ams_MaterialConsumption> {
       String? projectId = preferences.getString('ProjectId');
 
       final res = await http.get(Uri.parse(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/AMS'));
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/AMS'));
 
       print(
-          'http://ecmtest.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/AMS');
+          'http://ecmv2.iotwater.in:3011/api/v1/damage/materialConsumptionSummaryCount/$projectId/$area/$distibutory/AMS');
 
       var json = jsonDecode(res.body);
       List<MatetrialConsumption> fetchedData = <MatetrialConsumption>[];
